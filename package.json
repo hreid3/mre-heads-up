@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/hreid3/mre-heads-up#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "clean": "tsc --build --clean",
     "build": "tsc --build && eslint --ext .ts src",
     "build-only": "tsc --build",
@@ -40,14 +40,17 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/redux-logger": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
     "husky": "^6.0.0",
+    "jest": "^26.6.3",
     "nodemon": "^2.0.2",
     "release-it": "^14.6.2",
+    "ts-jest": "^26.5.6",
     "typescript": "^3.7.5"
   },
   "dependencies": {
