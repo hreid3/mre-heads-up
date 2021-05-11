@@ -1,6 +1,6 @@
 {
   "name": "mre-heads-up",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "The popular game heads-up in VR.",
   "main": "built/server.js",
   "repository": {
@@ -35,20 +35,27 @@
     "start-watch": "nodemon --nolazy --inspect .",
     "debug": "node --nolazy --inspect=9229 .",
     "debug-watch": "npm run build-only && concurrently \"npm run build-watch\" \"nodemon --nolazy --inspect=9229 .\"",
-    "debug-watch-brk": "npm run build-only && concurrently \"npm run build-watch\" \"nodemon --nolazy --inspect-brk=9229 .\""
+    "debug-watch-brk": "npm run build-only && concurrently \"npm run build-watch\" \"nodemon --nolazy --inspect-brk=9229 .\"",
+    "release": "release-it",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "@types/redux-logger": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
+    "husky": "^6.0.0",
     "nodemon": "^2.0.2",
+    "release-it": "^14.6.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
     "@microsoft/mixed-reality-extension-sdk": "^0.20.0",
+    "@reduxjs/toolkit": "^1.5.1",
     "@types/dotenv": "^6.1.0",
     "@types/node": "^10.3.1",
-    "dotenv": "^6.2.0"
+    "dotenv": "^6.2.0",
+    "redux-logger": "^3.0.6"
   }
 }
