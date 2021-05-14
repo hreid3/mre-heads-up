@@ -1,12 +1,13 @@
 name: Blockbuster Movies
 enabled: True
-description: For this deck of favorit movies,
-  give clues tgo help our teammate guess which
+description: For this deck of favorite movies,
+  give clues to go help teammate guess which
   on is on the card, without saying any part of
   the movie name, and without rhyming!
 
-  For an extra challenge, Don't use any celebrity or character names.
-  just talk about the plots
+
+  For an extra challenge, don't use any celebrity or character names.
+  Just talk about the plots
 type: text
 prefabUri: /decks/objects/blockbuster-movies.prefab
 cards:

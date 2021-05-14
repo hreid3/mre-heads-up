@@ -1,4 +1,5 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
+import wordwrap from 'word-wrap';
 import { Deck, DecksState } from "../../models/application";
 import store from "../../store";
 
@@ -57,30 +58,16 @@ export class DeckSelection {
 
 	private createDeck = (deck: Deck) => {
 		const mat = this.assets.createMaterial('mat', { color: MRE.Color3.Blue() });
-		const box = this.assets.createBoxMesh('box', 0.75, 1, 0.075);
-		const textActor = MRE.Actor.Create(this.context, {
+		const box = this.assets.createBoxMesh('box', 0.8, 1, 0.075);
+		const base = MRE.Actor.Create(this.context, {
 			actor: {
 				parentId: this.root.id,
-				appearance: {
-					meshId: box.id,
-					materialId: mat.id,
-					enabled: true,
-				},
-				text: {
-					pixelsPerLine: 12,
-					contents: `${deck.name}\n\n${deck.description}`,
-					height: 0.03,
-					anchor: MRE.TextAnchorLocation.TopLeft,
-					justify: MRE.TextJustify.Left,
-					color: MRE.Color3.FromInts(255, 200, 255)
-				},
 			}
-		});
-		// textActor.appearance.mesh.boundingBoxDimensions;
+		})
 		const block = MRE.Actor.Create(this.context,
 			{
 				actor: {
-					parentId: textActor.id,
+					parentId: base.id,
 					appearance: {
 						meshId: box.id,
 						materialId: mat.id,
@@ -88,7 +75,7 @@ export class DeckSelection {
 					},
 					transform: {
 						local: {
-							position: { x:0.375, y: -0.5, z: 0.06},
+							position: { x:0.020, y: -0.1, z: 0.0},
 						}
 					},
 					// rigidBody: {
@@ -104,10 +91,72 @@ export class DeckSelection {
 				}
 			}
 		);
-		/*
+		const textLayout = new MRE.PlanarGridLayout(base);
+		const title = MRE.Actor.Create(this.context, {
+			actor: {
+				parentId: base.id,
+				appearance: {
+					meshId: box.id,
+					materialId: mat.id,
+					enabled: true,
+				},
+				transform: {
+					local: {
+						position: { x: 0, y: 0, z: -0.05},
+					}
+				},
+				text: {
+					pixelsPerLine: 12,
+					contents: `${wordwrap(deck.name)}`,
+					height: 0.070,
+					anchor: MRE.TextAnchorLocation.BottomCenter,
+					justify: MRE.TextJustify.Center,
+					color: MRE.Color3.FromInts(255, 200, 255)
+				},
+			}
+		});
+		textLayout.addCell({
+			row: 0,
+			height: 0.0,
+			column: 0,
+			width: .45,
+			contents: title
+		})
 
-
-		 */
-		return textActor;
+		const description = MRE.Actor.Create(this.context, {
+			actor: {
+				parentId: base.id,
+				appearance: {
+					meshId: box.id,
+					materialId: mat.id,
+					enabled: true,
+				},
+				transform: {
+					local: {
+						position: { x: 0, y: 0, z: -0.05},
+					}
+				},
+				text: {
+					pixelsPerLine: 12,
+					contents: `${wordwrap(deck.description, { width: 40})}`,
+					height: 0.035,
+					anchor: MRE.TextAnchorLocation.MiddleCenter,
+					justify: MRE.TextJustify.Center,
+					color: MRE.Color3.FromInts(255, 200, 255)
+				},
+			}
+		});
+		textLayout.addCell({
+			row: 1,
+			height: 0.4,
+			column: 0,
+			width: .45,
+			contents: description
+		})
+		textLayout.applyLayout();
+		// textActor.appearance.mesh.boundingBoxDimensions;
+		return base;
 	}
+
+
 }
