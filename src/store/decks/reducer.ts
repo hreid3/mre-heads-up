@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { ApplicationState, DecksState } from "../../models/application";
+import { DecksState } from "../../models/application";
 import { loadDecksSuccess } from "./actions";
 
 const initialState: DecksState = {
