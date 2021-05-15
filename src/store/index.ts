@@ -6,13 +6,11 @@ import { default as decks } from './decks/reducer';
 const logger = createLogger({
 	collapsed: true,
 	diff: true,
-
-
 });
 
 const store = configureStore({
 	reducer: { app, decks, },
-	// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
 export default store;

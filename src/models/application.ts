@@ -1,9 +1,12 @@
 export interface ApplicationState {
   appStarted: boolean;
+  gameSession: GameSession;
 }
 
+export type ID = string | number;
+
 export interface Deck {
-  id: string;
+  id: ID;
   name: string;
   description: string;
   playInstructions: string;
@@ -13,17 +16,17 @@ export interface Deck {
 }
 
 export interface Card {
-  id: string;
+  id: ID;
   value: string;
   type: 'text' | 'image';
 }
 
-enum GAME_STATE {
-  Active,
+export enum GAME_STATE {
+  Playing,
   Waiting,
 }
 export interface GameSession {
-  selectedDeck: Deck;
+  selectedDeckId: ID;
   pile: Card[];
   draw: Array<{correct: boolean; card: Card}>;
   passCount: number;
@@ -31,6 +34,7 @@ export interface GameSession {
   duration: number;
   timeRemaining: number;
   state: GAME_STATE;
+  playerId: string;
 }
 
 export interface DecksState {

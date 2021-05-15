@@ -7,7 +7,7 @@ description: For this deck of favorite movies,
 
 
   For an extra challenge, don't use any celebrity or character names.
-  Just talk about the plots
+  Just talk about the plots.
 type: text
 prefabUri: /decks/objects/blockbuster-movies.prefab
 cards:

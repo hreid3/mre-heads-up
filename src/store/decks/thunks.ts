@@ -12,9 +12,11 @@ export const loadDecksFromFileSystem = createAsyncThunk(
 			const directory = `${INIT_CWD}/public/decks/data`;
 			const files = await fs.readdir(directory);
 			const decks: Deck[] = [];
+			let id = 0;
 			for(const fileName of files) {
 				const file = await fs.readFile(`${directory}/${fileName}`, { encoding: 'utf8'});
 				const deck = yaml.parse(file) as Deck;
+				deck.id = `${id++}`;
 				decks.push(deck);
 			}
 			const payload: DecksState = {
