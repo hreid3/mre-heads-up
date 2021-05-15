@@ -6,8 +6,8 @@ import store from "../../store";
 import { playerDeckCanceled, playerDeckSelected } from "../../store/app/actions";
 import theme from "../../theme/default";
 
-const PLAY_BUTTON_NAME = "playButton";
-const PLAY_BUTTON_lABEL = "label";
+const playButtonName = "playButton";
+const playButtonLabel = "label";
 
 export class DeckSelection {
 	private root: MRE.Actor;
@@ -31,14 +31,14 @@ export class DeckSelection {
 		this.playerButtonMapping = {};
 	};
 
-	public setOnlyDeckSelected = (value = false, selectedDeckId?: ID) => {
+	public setOnlyDeckSelected = (value: boolean, selectedDeckId?: ID) => {
 		const setBtnLbl = (actor: MRE.Actor, label: string, setDefaultColor?: boolean) => {
 			const children = actor.children;
 			for (const child of children) {
-				if (child.name === PLAY_BUTTON_NAME) {
+				if (child.name === playButtonName) {
 					const grandChildren = child.children;
 					for (const grandChild of grandChildren) {
-						if (grandChild.name === PLAY_BUTTON_lABEL) {
+						if (grandChild.name === playButtonLabel) {
 							grandChild.text.contents = label;
 							if (setDefaultColor) {
 								grandChild.text.color = theme.color.button.default.text;
@@ -190,7 +190,7 @@ export class DeckSelection {
 			{
 				actor: {
 					parentId: base.id,
-					name: PLAY_BUTTON_NAME,
+					name: playButtonName,
 					appearance: {
 						meshId: box.id,
 						materialId: mat.id,
@@ -214,7 +214,7 @@ export class DeckSelection {
 
 		const label = MRE.Actor.Create(this.context, {
 			actor: {
-				name: PLAY_BUTTON_lABEL,
+				name: playButtonLabel,
 				parentId: playButton.id,
 				transform: {local: {position: {z: -0.03, y: 0.005}}},
 				text: {
