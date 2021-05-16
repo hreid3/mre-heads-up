@@ -1,6 +1,7 @@
 export interface ApplicationState {
   appStarted: boolean;
   gameSession: GameSession;
+  displayResults: boolean;
 }
 
 export type ID = string | number;
@@ -25,7 +26,9 @@ export enum GAME_STATE {
   Playing,
   Waiting,
 }
-type PlayedCard = { correct: boolean | undefined; card: Card };
+
+export type PlayedCard = { correct: boolean | undefined; card: Card };
+
 export interface GameSession {
   selectedDeckId: ID;
   pile: Card[];

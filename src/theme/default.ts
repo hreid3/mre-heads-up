@@ -5,6 +5,7 @@ const theme = {
 		font: {
 			header: MRE.Color3.White(),
 			paragraph: MRE.Color3.White(),
+			disabled: MRE.Color3.Gray(),
 		},
 		background: MRE.Color3.Blue(),
 		button: {

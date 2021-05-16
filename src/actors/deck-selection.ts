@@ -99,7 +99,7 @@ export class DeckSelection {
 	}
 
 	private setup = () => {
-		console.log("Horace", "Decks change detected");
+		console.log("Decks change detected");
 		this.root = MRE.Actor.Create(this.context, {
 			actor: {
 				name: "DeckSelectionRoot",

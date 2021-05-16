@@ -12,6 +12,7 @@ export class HeadsUpCollisionDetector {
 	}
 
 	public startCollectionDetection = (callback: (arg0: 'top'|'bottom') => void) => {
+		this.actors = [];
 		const FRONT_DETECTOR = 'frontDetector';
 		const headBoxMesh = this.assets.createBoxMesh('box', 0.5, 0.5, 0.5);
 		const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);

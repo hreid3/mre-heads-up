@@ -1,9 +1,15 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
 import countdown from "countdown";
 import wordwrap from "word-wrap";
-import { DecksState, GameSession } from "../models/application";
+import { DecksState, GameSession, ApplicationState } from "../models/application";
 import store from "../store";
-import { drawCard, initializeGameSession, recordUserSelection } from "../store/app/actions";
+import {
+	drawCard,
+	endGameSession,
+	initializeGameSession,
+	recordUserSelection,
+	setDisplayResults
+} from "../store/app/actions";
 import { AbstractChangeDetection } from "../store/common/AbstractChangeDetection";
 import theme from "../theme/default";
 import shuffle from "../utils/shuffle";
@@ -59,9 +65,9 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.buildCard();
 
 		// Start pre-countdown
+		await this.startReadyCountdown();
 		this.headsUpDownDetector = new HeadsUpCollisionDetector(this.context, this.parent, this.player);
 		this.headsUpDownDetector.startCollectionDetection(this.handleHeadUpDownEvent);
-		await this.startReadyCountdown();
 		this.readyCountdownLabel.appearance.enabled = false;
 
 		this.cardTextLabel.appearance.enabled = true;
@@ -71,6 +77,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.startGameSessionCountdown().then(() => {
 			// Display results
 			this.headsUpDownDetector.stopCollectionDetection();
+			store.dispatch(endGameSession());
 			console.log("Game over");
 		});
 	};
@@ -171,6 +178,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	});
 
 	buildCard = () => {
+		this.actorRef = [];
 		const mat = this.assets.createMaterial("mat", {color: theme.color.background});
 		const box = this.assets.createBoxMesh("box", 1.25, 0.8, 0.075);
 		this.root = MRE.Actor.Create(this.context, {
@@ -254,4 +262,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					countdown.SECONDS | countdown.MINUTES);
 		}));
 	};
+
+	handleApplicationStateChanged(prev: ApplicationState): void {
+	}
 }
