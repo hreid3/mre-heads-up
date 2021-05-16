@@ -1,0 +1,113 @@
+name: Blockbuster Movies
+enabled: True
+description: For this deck of favorite movies,
+  give clues to go help teammate guess which
+  on is on the card, without saying any part of
+  the movie name, and without rhyming!
+
+
+  For an extra challenge, don't use any celebrity or character names.
+  Just talk about the plots.
+type: text
+prefabUri: /decks/objects/blockbuster-movies.prefab
+cards:
+  - Independence Day
+  - Avatar
+  - "Avengers: Endgame"
+  - "Titanic"
+  - "Star Wars: Episode VII - The Force Awakens"
+  - "Avengers: Infinity War"
+  - Jurassic World
+  - The Lion King
+  - Marvel's The Avengers
+  - Furious 7
+  - Frozen II
+  - "Avengers: Age of Ultron"
+  - Black Panther
+  - Harry Potter and the Deathly Hallows, Part 2
+  - "Star Wars: Episode VIII - The Last Jedi"
+  - "Jurassic World: Fallen Kingdom"
+  - Frozen
+  - Beauty and the Beast
+  - Incredibles 2
+  - The Fate of the Furious
+  - Iron Man 3
+  - Minions
+  - "Captain America: Civil War"
+  - Aquaman
+  - "The Lord of the Rings: The Return of the King"
+  - "Spider-Man: Far from Home"
+  - Captain Marvel
+  - "Transformers: Dark of the Moon"
+  - Skyfall
+  - "Transformers: Age of Extinction"
+  - The Lion King
+  - The Dark Knight Rises
+  - Joker
+  - "Star Wars: Episode IX - The Rise of Skywalker"
+  - Toy Story 4
+  - Toy Story 3
+  - "Pirates of the Caribbean: Dead Man's Chest"
+  - "Rogue One: A Star Wars Story"
+  - Aladdin
+  - "Pirates of the Caribbean: On Stranger Tides"
+  - Despicable Me 3
+  - Jurassic Park
+  - Finding Dory
+  - "Star Wars: Episode I - The Phantom Menace"
+  - Alice in Wonderland
+  - Zootopia
+  - "The Hobbit: An Unexpected Journey"
+  - Harry Potter and the Sorcerer's Stone
+  - The Dark Knight
+  - Harry Potter and the Deathly Hallows
+  - Despicable Me 2
+  - The Jungle Book
+  - "Jumanji: Welcome to the Jungle"
+  - "Pirates of the Caribbean: At World's End"
+  - "The Hobbit: The Desolation of Smaug"
+  - "The Hobbit: The Battle of the Five Armies"
+  - "The Lord of the Rings: The Two Towers"
+  - Harry Potter and the Order of the Phoenix
+  - Finding Nemo
+  - Harry Potter and the Half-Blood Prince"
+  - Shrek 2
+  - Bohemian Rhapsody
+  - "The Lord of the Rings: The Fellowship of the Ring"
+  - Harry Potter and the Goblet of Fire
+  - Spider-Man 3
+  - "Ice Age: Dawn of the Dinosaurs"
+  - "Spectre"
+  - "Spider-Man: Homecoming"
+  - Harry Potter and the Chamber of Secrets
+  - "Ice Age: Continental Drift"
+  - "The Secret Life of Pets"
+  - "Batman v Superman: Dawn of Justice"
+  - Wolf Warrior 2
+  - "Star Wars: Episode III - Revenge of the Sith"
+  - "The Hunger Games: Catching Fire"
+  - Guardians of the Galaxy Vol. 2
+  - Inside Out
+  - Venom
+  - "Thor: Ragnarok"
+  - Inception
+  - "Transformers: Revenge of the Fallen"
+  - "The Twilight Saga: Breaking Dawn, Part 2"
+  - Spider-Man
+  - Wonder Woman
+  - Hi, Mom
+  - Fantastic Beasts and Where to Find Them
+  - Shrek the Third
+  - Coco
+  - "Jumanji: The Next Level"
+  - Harry Potter and the Prisoner of Azkaban
+  - "Pirates of the Caribbean: Dead Men Tell No Tales"
+  - E. T. The Extra-Terrestrial
+  - "Mission: Impossible - Fallout"
+  - 2012
+  - Indiana Jones and the Kingdom of the Crystal Skull
+  - Spider-Man 2
+  - Fast & Furious 6
+  - Deadpool 2
+  - Deadpool
+  - "Star Wars: Episode IV - A New Hope"

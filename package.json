@@ -41,6 +41,8 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
+    "@types/mz": "^2.7.3",
+    "@types/node": "^10.17.59",
     "@types/redux-logger": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
@@ -56,9 +58,13 @@
   "dependencies": {
     "@microsoft/mixed-reality-extension-sdk": "^0.20.0",
     "@reduxjs/toolkit": "^1.5.1",
+    "@types/countdown": "^0.0.7",
     "@types/dotenv": "^6.1.0",
-    "@types/node": "^10.3.1",
+    "countdown": "^2.6.0",
     "dotenv": "^6.2.0",
-    "redux-logger": "^3.0.6"
+    "mz": "^2.7.0",
+    "redux-logger": "^3.0.6",
+    "word-wrap": "^1.2.3",
+    "yaml": "^1.10.2"
   }
 }
