@@ -8,7 +8,6 @@ import {
 	endGameSession,
 	initializeGameSession,
 	recordUserSelection,
-	setDisplayResults
 } from "../store/app/actions";
 import { AbstractChangeDetection } from "../store/common/AbstractChangeDetection";
 import theme from "../theme/default";

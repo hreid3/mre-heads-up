@@ -3,8 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { parseGuid, User } from "@microsoft/mixed-reality-extension-sdk";
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
+import { parseGuid } from "@microsoft/mixed-reality-extension-sdk";
 import { DeckSelection } from "./actors/deck-selection";
 import { GameSessionResults } from "./actors/game-session-results";
 import { HeadsUpCard } from "./actors/heads-up-card";
@@ -31,14 +31,14 @@ export default class App {
 	}
 
 	private started() {
-		this.appRoot = MRE.Actor.Create(this.context, { actor: { name: 'AppRoot',}});
+		this.appRoot = MRE.Actor.Create(this.context, {actor: {name: "AppRoot"}});
 		store.dispatch(setAppStarted(true));
 		store.dispatch(loadDecksFromFileSystem());
 		this.deckSelection = new DeckSelection(this.context, this.appRoot);
 		this.gameSessionResults = new GameSessionResults(this.context, this.appRoot);
 		// Listen for game start events
 		this.detectChanges();
-		console.log("App Started")
+		console.log("App Started");
 	}
 
 	private stopped() {
@@ -59,8 +59,8 @@ export default class App {
 					this.handleGameSessionChanged(prev);
 				}
 			}
-		})
-	}
+		});
+	};
 
 	private handleGameSessionChanged(prev: GameSession) {
 		const gm = this.gameSession;
