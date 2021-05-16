@@ -1,10 +1,10 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
 import { Actor } from "@microsoft/mixed-reality-extension-sdk";
 import wordwrap from "word-wrap";
-import { Deck, DecksState, GAME_STATE, GameSession, ID } from "../../models/application";
-import store from "../../store";
-import { playerDeckCanceled, playerDeckSelected } from "../../store/app/actions";
-import theme from "../../theme/default";
+import { Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/application";
+import store from "../store";
+import { playerDeckCanceled, playerDeckSelected } from "../store/app/actions";
+import theme from "../theme/default";
 
 const playButtonName = "playButton";
 const playButtonLabel = "label";

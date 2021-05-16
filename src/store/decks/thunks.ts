@@ -17,6 +17,13 @@ export const loadDecksFromFileSystem = createAsyncThunk(
 				const file = await fs.readFile(`${directory}/${fileName}`, { encoding: 'utf8'});
 				const deck = yaml.parse(file) as Deck;
 				deck.id = `${id++}`;
+				const cardStrings = deck.cards;
+				deck.cards = [];
+				id = 0;
+				for(const cardString of cardStrings) {
+					const value = cardString as unknown as string;
+					deck.cards.push({value, id: id++, type: 'text'});
+				}
 				decks.push(deck);
 			}
 			const payload: DecksState = {

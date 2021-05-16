@@ -5,8 +5,8 @@
 
 import { parseGuid, User } from "@microsoft/mixed-reality-extension-sdk";
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
-import { DeckSelection } from "./actors/decks/deck-selection";
-import { HeadsUpCard } from "./actors/decks/heads-up-card";
+import { DeckSelection } from "./actors/deck-selection";
+import { HeadsUpCard } from "./actors/heads-up-card";
 import { GAME_STATE, GameSession } from "./models/application";
 import store from "./store";
 import { setAppStarted } from "./store/app/actions";
@@ -70,6 +70,7 @@ export default class App {
 				this.headsUpCard?.destroy();
 				this.headsUpCard = new HeadsUpCard(this.context, this.appRoot, player);
 			} else if (gm.state === GAME_STATE.Waiting) {
+				console.log("canceled");
 				this.headsUpCard?.destroy();
 			}
 		}
