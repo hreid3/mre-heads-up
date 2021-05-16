@@ -72,7 +72,7 @@ export class DeckSelection {
 		}
 	};
 
-	private detectChanges = () => {
+	protected detectChanges = () => {
 		store.subscribe(() => {
 			const decks = store.getState().decks;
 			const gameSession = store.getState().app.gameSession;

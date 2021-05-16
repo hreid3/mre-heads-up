@@ -1,4 +1,5 @@
 
 export default {
-	duration: 60000
+	duration: 60000,
+	readyCountdownDuration: 5000,
 };

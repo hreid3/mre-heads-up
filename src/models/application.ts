@@ -25,16 +25,19 @@ export enum GAME_STATE {
   Playing,
   Waiting,
 }
+type PlayedCard = { correct: boolean | undefined; card: Card };
 export interface GameSession {
   selectedDeckId: ID;
   pile: Card[];
-  draw: Array<{correct: boolean; card: Card}>;
+  head: PlayedCard;
+  draw: PlayedCard[];
   passCount: number;
   correctCount: number;
   duration: number;
   timeRemaining: number;
   state: GAME_STATE;
   playerId: string;
+  readyCountdownDuration: number;
 }
 
 export interface DecksState {
