@@ -10,7 +10,7 @@ const logger = createLogger({
 
 const store = configureStore({
 	reducer: { app, decks, },
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+	// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
 export default store;

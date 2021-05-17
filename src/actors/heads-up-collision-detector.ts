@@ -5,6 +5,7 @@ export class HeadsUpCollisionDetector {
 	private topDetector: MRE.Actor;
 	private bottomDetector: MRE.Actor;
 	private frontDetector: MRE.Actor;
+	private detecting = false;
 	private actors: MRE.Actor[] = [];
 
 	constructor(private context: MRE.Context, private parent: MRE.Actor, private player: MRE.User) {
@@ -12,38 +13,47 @@ export class HeadsUpCollisionDetector {
 	}
 
 	public startCollectionDetection = (callback: (arg0: 'top'|'bottom') => void) => {
-		this.actors = [];
-		const FRONT_DETECTOR = 'frontDetector';
-		const headBoxMesh = this.assets.createBoxMesh('box', 0.5, 0.5, 0.5);
-		const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
+		this.detecting = true;
+		try {
+			this.actors = [];
+			const FRONT_DETECTOR = 'frontDetector';
+			const headBoxMesh = this.assets.createBoxMesh('box', 0.5, 0.5, 0.5);
+			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
 
-		this.frontDetector =
-			this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, { x: 0, y: 0, z: 1.25 });
-		this.frontDetector.attach(this.player.id, 'head');
+			this.frontDetector =
+				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 1.25});
+			this.frontDetector.attach(this.player.id, 'head');
 
-		this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1, z: 1});
-		this.topDetector.attach(this.player.id, 'neck');
-		this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
-			if (otherActor.name === FRONT_DETECTOR) {
-				callback('top');
-				console.log("TopBox connected");
-			}
-		});
+			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1, z: 1});
+			this.topDetector.attach(this.player.id, 'neck');
+			this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
+				if (otherActor.name === FRONT_DETECTOR) {
+					callback('top');
+					console.log("TopBox connected");
+				}
+			});
 
-		this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 1});
-		this.bottomDetector.attach(this.player.id, 'neck');
-		this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
-			if (otherActor.name === FRONT_DETECTOR) {
-				callback('bottom');
-				console.log("bottomBox connected");
-			}
-		});
-		this.actors.push(this.topDetector, this.bottomDetector, this.frontDetector);
+			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 1});
+			this.bottomDetector.attach(this.player.id, 'neck');
+			this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
+				if (otherActor.name === FRONT_DETECTOR) {
+					callback('bottom');
+					console.log("bottomBox connected");
+				}
+			});
+			this.actors.push(this.topDetector, this.bottomDetector, this.frontDetector);
+		} catch (error) {
+			this.detecting = false;
+			throw error;
+		}
 	}
 
 	public destroy = () => {
+		this.detecting = false;
 		this.actors.forEach(v => v.destroy());
 	}
+
+	public isDetecting = () => this.detecting;
 
 	public stopCollectionDetection = () => {
 		this.destroy();

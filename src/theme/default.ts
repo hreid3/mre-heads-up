@@ -6,8 +6,18 @@ const theme = {
 			header: MRE.Color3.White(),
 			paragraph: MRE.Color3.White(),
 			disabled: MRE.Color3.Gray(),
+			size: {
+				default: 0.050,
+			}
 		},
-		background: MRE.Color3.Blue(),
+		background: {
+			default: MRE.Color3.Blue(),
+			playCardResult: {
+				correct: MRE.Color3.Green(),
+				pass: MRE.Color3.Red(),
+				timeUp: MRE.Color3.Red(),
+			}
+		},
 		button: {
 			default: {
 				text: MRE.Color3.White(),
