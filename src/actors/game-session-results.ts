@@ -16,7 +16,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 
 	public setup = () => {
 		this.actors = [];
-		const mat = this.assets.createMaterial("mat", {color: theme.color.background});
+		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
 		const box = this.assets.createBoxMesh("box", 1.6, 1.25, 0.075);
 		this.root = MRE.Actor.Create(this.context, {
 			actor: {

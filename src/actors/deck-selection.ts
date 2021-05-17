@@ -5,6 +5,7 @@ import { Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/applica
 import store from "../store";
 import { playerDeckCanceled, playerDeckSelected } from "../store/app/actions";
 import theme from "../theme/default";
+import config from "../config";
 
 const playButtonName = "playButton";
 const playButtonLabel = "label";
@@ -18,6 +19,7 @@ export class DeckSelection {
 	private playerButtonMapping: Record<string, Actor> = {};
 	private gameSession: GameSession;
 	private deckCards: Actor[] = [];
+	private playButtonSoundAsset: MRE.Asset;
 
 	constructor(private context: MRE.Context, private parent: MRE.Actor) {
 		this.assets = new MRE.AssetContainer(this.context);
@@ -116,6 +118,11 @@ export class DeckSelection {
 			}
 			this.layoutCards(this.deckCards);
 		}
+		this.playButtonSoundAsset = this.assets.createSound(
+			'final-count-down',
+			{ uri: `/sounds/play-button.wav` },
+		);
+
 	};
 
 	private layoutCards = (deckCards: Actor[]) => {
@@ -245,6 +252,7 @@ export class DeckSelection {
 				// TODO: Prompt to be sure.
 				store.dispatch(playerDeckCanceled({playerId: user.id.toString()}));
 			} else {
+				this.root.startSound(this.playButtonSoundAsset?.id, { ...config.soundOptions})
 				store.dispatch(playerDeckSelected({selectedDeckId: deck.id, playerId: user.id.toString()}));
 			}
 		});
@@ -281,7 +289,7 @@ export class DeckSelection {
 	);
 
 	private createDeck = (deck: Deck) => {
-		const mat = this.assets.createMaterial("mat", {color: theme.color.background});
+		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
 		const box = this.assets.createBoxMesh("box", 0.8, 1, 0.075);
 		const base = MRE.Actor.Create(this.context, {actor: {parentId: this.root.id}});
 		this.getDeckBackground(base, mat, box);
