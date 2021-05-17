@@ -87,7 +87,6 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	protected handleGameEndEvent = async () => {
 		// Display results
 		this.headsUpDownDetector.stopCollectionDetection();
-		const currentText = this.cardTextLabel.text;
 		this.cardTextLabel.text.height = CARD_TEXT_HEIGHT + 0.05;
 		this.cardTextLabel.text.contents = "Time Up!";
 		this.background.appearance.material = this.assets.createMaterial("mat-heads-up-card-time-up",
