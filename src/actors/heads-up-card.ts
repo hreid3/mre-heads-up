@@ -15,7 +15,15 @@ import shuffle from "../utils/shuffle";
 import { HeadsUpCollisionDetector } from "./heads-up-collision-detector";
 
 const CARD_TEXT_HEIGHT = 0.18;
-
+const soundOptions = {
+	volume: 0.2,
+	looping: false,
+	paused: false,
+	doppler: 5.0,
+	spread: 0.0,
+	rolloffStartDistance: 9.3,
+	time: 0,
+};
 export class HeadsUpCard extends AbstractChangeDetection {
 	private root: MRE.Actor;
 	private decksState: DecksState;
@@ -25,8 +33,11 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	private cardTextLabel: MRE.Actor;
 	private readyCountdownLabel: MRE.Actor;
 	private gameSessionCountdownLabel: MRE.Actor;
+	private background: MRE.Actor;
 	private actorRef: MRE.Actor[] = [];
 	private headsUpDownDetector: HeadsUpCollisionDetector;
+	private headDownSoundAsset: MRE.Asset;
+	private headUpSoundAsset: MRE.Asset;
 
 	constructor(private context: MRE.Context, private parent: MRE.Actor, private player: MRE.User) {
 		super();
@@ -82,8 +93,29 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	};
 
 	protected handleHeadUpDownEvent = (result: "top" | "bottom") => {
-		store.dispatch(recordUserSelection(result === "bottom"));
-		store.dispatch(drawCard({}));
+		const currentBg = this.background.appearance.material;
+		const currentText = this.cardTextLabel.text;
+		this.cardTextLabel.text.height = CARD_TEXT_HEIGHT + 0.05;
+		if (result === 'bottom') {
+			setTimeout(() => this.root.startSound(this.headDownSoundAsset.id, soundOptions), 250);
+			// We need to flash the Correct card, change the bg to green
+			this.background.appearance.material =
+				this.assets.createMaterial("green-mat-heads-up-card", { color: MRE.Color3.Green() });
+			this.cardTextLabel.text.contents = 'Correct!';
+		} else {
+			setTimeout(() => this.root.startSound(this.headUpSoundAsset.id, soundOptions), 250);
+			// We need to flash the Pass card, change the bg to red
+			this.background.appearance.material =
+				this.assets.createMaterial("red-mat-heads-up-card", { color: MRE.Color3.Red() });
+			this.cardTextLabel.text.contents = 'Pass';
+		}
+		setTimeout(() => {
+			this.cardTextLabel.text.contents = '';
+			this.cardTextLabel.text.height = currentText.height;
+			store.dispatch(recordUserSelection(result === "bottom"));
+			store.dispatch(drawCard({}));
+			this.background.appearance.material = currentBg;
+		}, 1000);
 	};
 
 	protected getBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.context,
@@ -198,12 +230,20 @@ export class HeadsUpCard extends AbstractChangeDetection {
 				}
 			});
 		base.attach(this.player.id, "head");
-		const bg = this.getBackground(base, mat, box);
+		this.background = this.getBackground(base, mat, box);
 		this.readyCountdownLabel = this.buildReadyCountdownLabel(base);
 		this.cardTextLabel = this.buildCardTextLabel(base);
 		this.gameSessionCountdownLabel = this.buildGameSessionCountdownLabel(base);
-		this.actorRef.push(base, this.root, bg, this.readyCountdownLabel,
+		this.actorRef.push(base, this.root, this.background, this.readyCountdownLabel,
 			this.cardTextLabel, this.gameSessionCountdownLabel);
+		this.headDownSoundAsset = this.assets.createSound(
+			'head-down-sound',
+			{ uri: `/sounds/head-down.wav` }
+		);
+		this.headUpSoundAsset = this.assets.createSound(
+			'head-up-sound',
+			{ uri: `/sounds/head-up.wav` }
+		);
 	};
 
 	handleGameSessionChanged(prev: GameSession): void {
