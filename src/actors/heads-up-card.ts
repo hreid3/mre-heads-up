@@ -77,7 +77,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.cardTextLabel.appearance.enabled = true;
 		this.loadCardText();
 		this.root.startSound(this.firstCardSoundAsset?.id, {...soundOptions});
-		console.log("Game started");
+		console.log("Game Session started");
 		// Play game
 		this.startGameSessionCountdown().then(this.handleGameEndEvent);
 	};
@@ -95,7 +95,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.root.startSound(this.endGameSessionEndSoundAsset?.id, {...soundOptions});
 		await delay(config.timeUpDuration);
 		store.dispatch(endGameSession());
-		console.log("Game over");
+		console.log("Game Session over");
 	};
 
 	protected handleHeadUpDownEvent = (result: "top"|"bottom") => {

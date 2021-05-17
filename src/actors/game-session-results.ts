@@ -5,8 +5,15 @@ import { ApplicationState, GameSession, PlayedCard } from "../models/application
 import { AbstractChangeDetection } from "../store/common/AbstractChangeDetection";
 import theme from "../theme/default";
 import delay from "../utils/delay";
+import config from '../config';
 
 const MAX_ITEM_SIZE = 9;
+const cardCellItemOptions = {
+	height: 0.12,
+	column: 0,
+	width: 1.6,
+}
+
 export class GameSessionResults extends AbstractChangeDetection {
 	private root: MRE.Actor;
 	private assets: MRE.AssetContainer;
@@ -16,6 +23,9 @@ export class GameSessionResults extends AbstractChangeDetection {
 	private internalCount = 0;
 	private generator = 0;
 	private itemCache: MRE.Actor[];
+	private correctSoundAsset: MRE.Asset;
+	private passSoundAsset: MRE.Asset;
+
 
 	constructor(private context: MRE.Context, private parent: MRE.Actor) {
 		super();
@@ -30,6 +40,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 		this.actors = [];
 		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
 		const box = this.assets.createBoxMesh("box", 1.6, 1.25, 0.075);
+		this.setupSounds();
 		this.root = MRE.Actor.Create(this.context, {
 			actor: {
 				name: "GameSessionResultsRoot",
@@ -61,12 +72,15 @@ export class GameSessionResults extends AbstractChangeDetection {
 			this.internalCount += card.correct ? 1 : 0;
 			await delay(1000);
 			const item = this.createResultItem(base, card);
+			if (card.correct) {
+				this.root.startSound(this.correctSoundAsset?.id, {...config.soundOptions});
+			} else {
+				this.root.startSound(this.passSoundAsset?.id, {...config.soundOptions});
+			}
 			row++;
 			textLayout.addCell({
+				...cardCellItemOptions,
 				row,
-				height: 0.12,
-				column: 0,
-				width: 1.6,
 				contents: item,
 			});
 			this.itemCache.push(item);
@@ -78,10 +92,8 @@ export class GameSessionResults extends AbstractChangeDetection {
 				textLayout = getTextLayout();
 				for(let i=0; i < this.itemCache.length; i++) {
 					textLayout.addCell({
+						...cardCellItemOptions,
 						row: i + 1,
-						height: 0.12,
-						column: 0,
-						width: 1.6,
 						contents: this.itemCache[i],
 					})
 				}
@@ -90,6 +102,17 @@ export class GameSessionResults extends AbstractChangeDetection {
 			this.title.text.contents = this.getTitleText();
 		}
 	};
+
+	private setupSounds = () => {
+		this.correctSoundAsset = this.assets.createSound(
+			"correct-sound",
+			{uri: `/sounds/display-text.wav`}
+		);
+		this.passSoundAsset = this.assets.createSound(
+			"passed-sound",
+			{uri: `/sounds/negative-result.wav`}
+		);
+	}
 
 	private fillAndApplyLayout = (base: MRE.Actor, layout: MRE.PlanarGridLayout) => {
 		const row = layout.getRowCount();
@@ -100,9 +123,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 				const item = this.createResultItem(base, {card: { value: ``, id: `idgen_${this.generator++}`, type: 'text'}, correct: false});
 				layout.addCell({
 					row: i,
-					height: 0.12,
-					column: 0,
-					width: 1.6,
+					...cardCellItemOptions,
 					contents: item,
 					alignment: BoxAlignment.MiddleCenter,
 				});
@@ -136,7 +157,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 		}
 	);
 
-	protected getTitleText = () => `You got ${this.internalCount} right`;
+	protected getTitleText = () => `YOU GOT ${this.internalCount} CARD${ this.internalCount !== 1 ? 'S':''}`;
 	protected createTitle = (base: MRE.Actor) => MRE.Actor.Create(this.context, {
 		actor: {
 			parentId: base.id,
@@ -152,7 +173,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 			text: {
 				pixelsPerLine: 12,
 				contents: this.getTitleText(),
-				height: 0.070,
+				height: 0.075,
 				anchor: MRE.TextAnchorLocation.MiddleCenter,
 				justify: MRE.TextJustify.Center,
 				color: theme.color.font.header
