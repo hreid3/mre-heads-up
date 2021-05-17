@@ -93,7 +93,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			{color: theme.color.background.playCardResult.timeUp});
 
 		this.root.startSound(this.endGameSessionEndSoundAsset?.id, {...soundOptions});
-		await delay(5000);
+		await delay(config.timeUpDuration);
 		store.dispatch(endGameSession());
 		console.log("Game over");
 	};
