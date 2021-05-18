@@ -16,7 +16,7 @@ export class DeckSelection {
 	private decksState: DecksState;
 	private assets: MRE.AssetContainer;
 	private actorDeckMapping: Record<string, Actor> = {};
-	private playerButtonMapping: Record<string, Actor> = {};
+	// private playerButtonMapping: Record<string, Actor> = {};
 	private gameSession: GameSession;
 	private deckCards: Actor[] = [];
 	private playButtonSoundAsset: MRE.Asset;
@@ -30,7 +30,7 @@ export class DeckSelection {
 	public destroy = () => {
 		this.root?.destroy();
 		this.actorDeckMapping = {};
-		this.playerButtonMapping = {};
+		// this.playerButtonMapping = {};
 		this.deckCards?.forEach(v => v.destroy());
 		this.deckCards = [];
 	};
@@ -259,7 +259,7 @@ export class DeckSelection {
 				store.dispatch(playerDeckSelected({selectedDeckId: deck.id, playerId: user.id.toString()}));
 			}
 		});
-		this.playerButtonMapping[deck.id] = playButton;
+		// this.playerButtonMapping[deck.id] = playButton;
 		return playButton;
 	};
 
