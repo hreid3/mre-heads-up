@@ -22,7 +22,9 @@ export const loadDecksFromFileSystem = createAsyncThunk(
 				id = 0;
 				for(const cardString of cardStrings) {
 					const value = cardString as unknown as string;
-					deck.cards.push({value, id: id++, type: 'text'});
+					if (value.length <= 25) {
+						deck.cards.push({value, id: id++, type: 'text'});
+					}
 				}
 				decks.push(deck);
 			}

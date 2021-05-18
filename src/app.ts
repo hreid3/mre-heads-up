@@ -10,14 +10,13 @@ import { GameSessionResults } from "./actors/game-session-results";
 import { HeadsUpCard } from "./actors/heads-up-card";
 import { GAME_STATE, GameSession } from "./models/application";
 import store from "./store";
-import { setAppStarted } from "./store/app/actions";
+import { playerDeckCanceled, setAppStarted } from "./store/app/actions";
 import { loadDecksFromFileSystem } from "./store/decks/thunks";
 
 /**
  * The main class of this Index. All the logic goes here.
  */
 export default class App {
-	private assets: MRE.AssetContainer;
 	private deckSelection: DeckSelection;
 	private appRoot: MRE.Actor;
 	private gameSession: GameSession;
@@ -25,12 +24,20 @@ export default class App {
 	private gameSessionResults: GameSessionResults;
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet) {
-		console.log("contructed");
-		this.context.onStarted(() => this.started());
-		this.context.onStopped(() => this.stopped());
+		console.log("constructed", this.context.sessionId);
+		this.context.onStarted(this.started);
+		this.context.onStopped(this.stopped);
+		this.context.onUserLeft(this.handleUserLeft)
 	}
 
-	private started() {
+	private handleUserLeft = (user: MRE.User) => {
+		const playerId = store?.getState()?.app?.gameSession?.playerId;
+		if (playerId === user.id.toString()) {
+			store?.dispatch(playerDeckCanceled({}));
+		}
+	}
+
+	private started = () => {
 		this.appRoot = MRE.Actor.Create(this.context, {actor: {name: "AppRoot"}});
 		store.dispatch(setAppStarted(true));
 		store.dispatch(loadDecksFromFileSystem());
@@ -41,7 +48,7 @@ export default class App {
 		console.log("App Started");
 	}
 
-	private stopped() {
+	private stopped = () => {
 		store.dispatch(setAppStarted(false));
 		this.deckSelection?.destroy();
 		this.headsUpCard?.destroy();
