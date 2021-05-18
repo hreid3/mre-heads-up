@@ -80,6 +80,10 @@ const reducer = createReducer(initialState, (builder => {
 			state.gameSession.selectedDeckId = '';
 			state.gameSession.state = GAME_STATE.Waiting;
 			state.displayResults = true;
+			if (state.gameSession.head) {
+				state.gameSession.draw.push(state.gameSession.head);
+				state.gameSession.head = null;
+			}
 		})
 	;
 }));

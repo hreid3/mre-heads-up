@@ -1,5 +1,8 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
+import debounce from 'lodash.debounce';
+import config from '../config'
 
+const showCubes = false;
 export class HeadsUpCollisionDetector {
 	private assets: MRE.AssetContainer;
 	private topDetector: MRE.Actor;
@@ -12,7 +15,10 @@ export class HeadsUpCollisionDetector {
 		this.assets = new MRE.AssetContainer(this.context);
 	}
 
-	public startCollectionDetection = (callback: (arg0: 'top'|'bottom') => void) => {
+	public startCollectionDetection = (callbackFn: (arg0: 'top'|'bottom') => void) => {
+		const callback = debounce(callbackFn, config.headsUpDetectorDebounce, {
+			leading: true, trailing: false
+		});
 		this.detecting = true;
 		try {
 			this.actors = [];
@@ -24,22 +30,16 @@ export class HeadsUpCollisionDetector {
 				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 1.25});
 			this.frontDetector.attach(this.player.id, 'head');
 
-			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1, z: 1});
+			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.1 , z: 1});
 			this.topDetector.attach(this.player.id, 'neck');
 			this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
-				if (otherActor.name === FRONT_DETECTOR) {
-					callback('top');
-					console.log("TopBox connected");
-				}
+				if (otherActor.name === FRONT_DETECTOR) { callback('top'); }
 			});
 
-			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 1});
+			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1.1, z: 1});
 			this.bottomDetector.attach(this.player.id, 'neck');
 			this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
-				if (otherActor.name === FRONT_DETECTOR) {
-					callback('bottom');
-					console.log("bottomBox connected");
-				}
+				if (otherActor.name === FRONT_DETECTOR) { callback('bottom'); }
 			});
 			this.actors.push(this.topDetector, this.bottomDetector, this.frontDetector);
 		} catch (error) {
@@ -69,7 +69,7 @@ export class HeadsUpCollisionDetector {
 				name,
 				appearance: {
 					meshId: box.id,
-					enabled: false, // makes invisible. // Use as the debugger.
+					enabled: showCubes, // makes invisible. // Use as the debugger.
 				},
 				transform: {
 					local: {

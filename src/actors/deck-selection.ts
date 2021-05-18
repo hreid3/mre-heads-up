@@ -31,6 +31,8 @@ export class DeckSelection {
 		this.root?.destroy();
 		this.actorDeckMapping = {};
 		this.playerButtonMapping = {};
+		this.deckCards?.forEach(v => v.destroy());
+		this.deckCards = [];
 	};
 
 	public setOnlyDeckSelected = (value: boolean, selectedDeckId?: ID) => {
@@ -108,6 +110,7 @@ export class DeckSelection {
 				parentId: this.parent.id
 			}
 		});
+		this.deckCards = [];
 		if (this.decksState?.decks) {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {

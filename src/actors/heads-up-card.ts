@@ -239,36 +239,38 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					}
 				}
 			});
-		base.attach(this.player.id, "head");
-		this.background = this.getBackground(base, mat, box);
-		this.readyCountdownLabel = this.buildReadyCountdownLabel(base);
-		this.cardTextLabel = this.buildCardTextLabel(base);
-		this.gameSessionCountdownLabel = this.buildGameSessionCountdownLabel(base);
-		this.actorRef.push(base, this.root, this.background, this.readyCountdownLabel,
-			this.cardTextLabel, this.gameSessionCountdownLabel);
-		this.headDownSoundAsset = this.assets.createSound("head-down-sound",
-			{uri: `/sounds/head-down.wav`}
-		);
-		this.headUpSoundAsset = this.assets.createSound(
-			"head-up-sound",
-			{uri: `/sounds/head-up.wav`}
-		);
-		this.preCountdownSoundAsset = this.assets.createSound(
-			"pre-countdown-sound",
-			{uri: `/sounds/count-down.wav`}
-		);
-		this.endGameSessionEndSoundAsset = this.assets.createSound(
-			"end-game-session-sound",
-			{uri: `/sounds/game-session-ended.wav`}
-		);
-		this.endingCountdownSoundAsset = this.assets.createSound(
-			"final-count-down-sound",
-			{uri: `/sounds/final-count-down.wav`}
-		);
-		this.firstCardSoundAsset = this.assets.createSound(
-			"first-card-sound",
-			{uri: `/sounds/display-text.wav`}
-		);
+		if (this.player) {
+			base.attach(this.player.id, "head");
+			this.background = this.getBackground(base, mat, box);
+			this.readyCountdownLabel = this.buildReadyCountdownLabel(base);
+			this.cardTextLabel = this.buildCardTextLabel(base);
+			this.gameSessionCountdownLabel = this.buildGameSessionCountdownLabel(base);
+			this.actorRef.push(base, this.root, this.background, this.readyCountdownLabel,
+				this.cardTextLabel, this.gameSessionCountdownLabel);
+			this.headDownSoundAsset = this.assets.createSound("head-down-sound",
+				{uri: `/sounds/head-down.wav`}
+			);
+			this.headUpSoundAsset = this.assets.createSound(
+				"head-up-sound",
+				{uri: `/sounds/head-up.wav`}
+			);
+			this.preCountdownSoundAsset = this.assets.createSound(
+				"pre-countdown-sound",
+				{uri: `/sounds/count-down.wav`}
+			);
+			this.endGameSessionEndSoundAsset = this.assets.createSound(
+				"end-game-session-sound",
+				{uri: `/sounds/game-session-ended.wav`}
+			);
+			this.endingCountdownSoundAsset = this.assets.createSound(
+				"final-count-down-sound",
+				{uri: `/sounds/final-count-down.wav`}
+			);
+			this.firstCardSoundAsset = this.assets.createSound(
+				"first-card-sound",
+				{uri: `/sounds/display-text.wav`}
+			);
+		}
 	};
 
 	handleGameSessionChanged(prev: GameSession): void {
