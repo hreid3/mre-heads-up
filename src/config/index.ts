@@ -1,7 +1,7 @@
 
 export default {
 	playStartDelay: 1000,
-	duration: 15000,
+	duration: 300000,
 	readyCountdownDuration: 3000,
 	timeUpDuration: 5000,
 	soundOptions: {
