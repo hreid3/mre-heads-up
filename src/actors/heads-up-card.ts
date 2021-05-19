@@ -236,10 +236,22 @@ export class HeadsUpCard extends AbstractChangeDetection {
 						local: {
 							rotation: {y: 90}
 						}
+					},
+					rigidBody: {
+						isKinematic: true,
+						useGravity: false,
+						mass: 0.1,
+					},
+					collider: {
+						geometry: {
+							shape: MRE.ColliderType.Auto,
+						},
+						isTrigger: true,
 					}
 				}
 			});
 		if (this.player) {
+			base.collider.onTrigger('trigger-exit', () => {});
 			base.attach(this.player.id, "head");
 			this.background = this.getBackground(base, mat, box);
 			this.readyCountdownLabel = this.buildReadyCountdownLabel(base);
@@ -298,7 +310,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 							__this.root.startSound(__this.preCountdownSoundAsset?.id, {...soundOptions});
 						}
 						if (ts.seconds < 1) {
-							resolve();
+							resolve(null);
 							// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 							// @ts-ignore
 							clearInterval(__this.readyCountdownTimer);
@@ -325,7 +337,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 							__this.root.startSound(__this.endingCountdownSoundAsset?.id, {...soundOptions});
 						}
 						if (ts.seconds < 1 && ts.minutes < 1) {
-							resolve();
+							resolve(null);
 							// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 							// @ts-ignore
 							clearInterval(__this.gameSessionCountdownTimer);
