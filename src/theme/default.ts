@@ -11,7 +11,7 @@ const theme = {
 			}
 		},
 		background: {
-			default: MRE.Color3.Blue(),
+			default: MRE.Color3.FromHexString('#005DE7'),
 			playCardResult: {
 				correct: MRE.Color3.Green(),
 				pass: MRE.Color3.Red(),
@@ -28,7 +28,7 @@ const theme = {
 				background: MRE.Color3.White(),
 			},
 			hover: {
-				text: MRE.Color3.Blue(),
+				text: MRE.Color3.FromHexString('#3333330'),
 				background: MRE.Color3.LightGray(),
 			}
 		}
