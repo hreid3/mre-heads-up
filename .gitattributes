@@ -38,3 +38,4 @@
 *.bz2 binary
 *.swp binary
 *.wav binary
+*.glb binary

@@ -33,7 +33,12 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	private endGameSessionEndSoundAsset: MRE.Asset;
 	private endingCountdownSoundAsset: MRE.Asset;
 
-	constructor(private context: MRE.Context, private parent: MRE.Actor, private player: MRE.User) {
+	constructor(
+		private context: MRE.Context,
+		private parent: MRE.Actor,
+		private player: MRE.User,
+		private headsUpCardPrefab: MRE.Prefab
+	) {
 		super();
 		this.assets = new MRE.AssetContainer(this.context);
 		this.startGaming();
@@ -42,16 +47,17 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	protected loadCardText = () => {
 		if (this.gameSession?.head?.card?.value && this.cardTextLabel?.text) {
 			const val = wordwrap(`${this.gameSession?.head?.card?.value}`, {
-				width: 20
+				width: 16
 			});
 			this.cardTextLabel.text.contents = val;
-			if (val.length > 10) {
-				this.cardTextLabel.text.height = CARD_TEXT_HEIGHT / 1.5;
-			} else if (val.length > 20) {
-				this.cardTextLabel.text.height = CARD_TEXT_HEIGHT / 2.5;
-			} else {
-				this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
-			}
+			this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
+			// if (val.length > 10) {
+			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT / 1.5;
+			// } else if (val.length > 20) {
+			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT / 2.5;
+			// } else {
+			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
+			// }
 		}
 	};
 
@@ -102,7 +108,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		if (this.headsUpDownDetector.isDetecting()) {
 			const currentBg = this.background.appearance.material;
 			const currentText = this.cardTextLabel.text;
-			this.cardTextLabel.text.height = CARD_TEXT_HEIGHT + 0.05;
+			this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;// + 0.05;
 			if (result === "bottom") {
 				setTimeout(() => this.root.startSound(this.headDownSoundAsset.id, {...soundOptions}), 250);
 				// We need to flash the Correct card, change the bg to green
@@ -128,29 +134,26 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		}
 	};
 
-	protected getBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.context,
-		{
-			actor: {
-				parentId: base.id,
-				appearance: {
-					meshId: box.id,
-					materialId: mat.id,
-					enabled: true
-				},
-				transform: {
-					local: {
-						position: {x: 0.0, y: 0.65, z: 0.0}
-					}
-				},
-				collider: {
-					geometry: {
-						shape: MRE.ColliderType.Auto
+	protected getBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) =>
+		MRE.Actor.CreateFromPrefab(this.context,
+			{
+				prefab: this.headsUpCardPrefab,
+				actor: {
+					parentId: base.id,
+					transform: {
+						local: {
+							position: {x: 0.0, y: 0.8, z: 0.0},
+						}
 					},
-					isTrigger: true
+					collider: {
+						geometry: {
+							shape: MRE.ColliderType.Auto
+						},
+						isTrigger: true
+					}
 				}
 			}
-		}
-	);
+		);
 
 	buildReadyCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.context, {
 		actor: {
@@ -160,7 +163,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.55, z: -0.05}
+					position: {x: 0, y: 0.65, z: -0.05}
 				}
 			},
 			text: {
@@ -182,7 +185,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.60, z: -0.05}
+					position: {x: 0, y: 0.75, z: -0.05}
 				}
 			},
 			text: {
@@ -204,7 +207,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.35, z: -0.05}
+					position: {x: 0, y: 0.45, z: -0.05}
 				}
 			},
 			text: {
@@ -234,7 +237,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					parentId: this.root.id,
 					transform: {
 						local: {
-							rotation: { y: 90 }
+							rotation: { y: 90 },
 						}
 					},
 					rigidBody: {
@@ -246,12 +249,14 @@ export class HeadsUpCard extends AbstractChangeDetection {
 						geometry: {
 							shape: MRE.ColliderType.Auto,
 						},
-						isTrigger: true,
+						isTrigger: false,
 					}
 				}
 			});
 		if (this.player) {
-			base.collider.onTrigger('trigger-exit', () => {});
+			base.collider.onTrigger('trigger-enter', () => {
+				console.log("wtf");
+			});
 			base.attach(this.player.id, "head");
 			this.background = this.getBackground(base, mat, box);
 			this.readyCountdownLabel = this.buildReadyCountdownLabel(base);

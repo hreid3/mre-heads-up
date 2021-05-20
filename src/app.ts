@@ -21,10 +21,17 @@ export default class App {
 	private appRoot: MRE.Actor;
 	private gameSession: GameSession;
 	private headsUpCard: HeadsUpCard;
+	private assets: MRE.AssetContainer;
 	private gameSessionResults: GameSessionResults;
+	private headsUpCardPrefab: MRE.Prefab;
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet) {
 		console.log("constructed", this.context.sessionId);
+		this.assets = new MRE.AssetContainer(this.context);
+		this.assets.loadGltf( '/models/heads-up-card.glb', 'box')
+			.then(headsUpCardPrefabLoader => {
+				this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
+			});
 		this.context.onStarted(this.started);
 		this.context.onStopped(this.stopped);
 		this.context.onUserLeft(this.handleUserLeft);
@@ -80,7 +87,7 @@ export default class App {
 			if (gm.state === GAME_STATE.Playing) {
 				const player = this.context.user(parseGuid(this.gameSession.playerId));
 				this.headsUpCard?.destroy();
-				this.headsUpCard = new HeadsUpCard(this.context, this.appRoot, player);
+				this.headsUpCard = new HeadsUpCard(this.context, this.appRoot, player, this.headsUpCardPrefab);
 			} else if (gm.state === GAME_STATE.Waiting) {
 				console.log("canceled");
 				this.headsUpCard?.destroy();

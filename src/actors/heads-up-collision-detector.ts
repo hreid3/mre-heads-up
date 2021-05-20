@@ -30,16 +30,17 @@ export class HeadsUpCollisionDetector {
 			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
 
 			this.frontDetector =
-				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 1.25}, mat);
+				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 2.25}, mat);
 			this.frontDetector.attach(this.player.id, 'center-eye');
 
-			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1 , z: 1}, mat);
+			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.25 , z: 2}, mat);
 			this.topDetector.attach(this.player.id, 'neck');
 			this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
 				if (otherActor.name === FRONT_DETECTOR) { callback('top'); }
+				console.log("Top collision")
 			});
 
-			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 1}, mat);
+			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 2}, mat);
 			this.bottomDetector.attach(this.player.id, 'neck');
 			this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
 				if (otherActor.name === FRONT_DETECTOR) { callback('bottom'); }
