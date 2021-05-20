@@ -27,7 +27,12 @@ export default class App {
 		console.log("constructed", this.context.sessionId);
 		this.context.onStarted(this.started);
 		this.context.onStopped(this.stopped);
-		this.context.onUserLeft(this.handleUserLeft)
+		this.context.onUserLeft(this.handleUserLeft);
+		this.context.onUserJoined(this.handleUserJoined);
+	}
+
+	private handleUserJoined = (user: MRE.User) => {
+		this.deckSelection.attachBehaviors();
 	}
 
 	private handleUserLeft = (user: MRE.User) => {

@@ -53,7 +53,14 @@ export class HeadsUpCollisionDetector {
 
 	public destroy = () => {
 		this.detecting = false;
-		this.actors.forEach(v => v.destroy());
+		this.actors.forEach(v => {
+			v.attachment?.userId && v.detach();
+			if (v.collider) {
+				v.collider.offTrigger('trigger-exit', () => {});
+				v.collider.offTrigger('trigger-enter', () => {});
+			}
+			v.destroy();
+		});
 	}
 
 	public isDetecting = () => this.detecting;
@@ -96,3 +103,4 @@ export class HeadsUpCollisionDetector {
 		}
 	);
 }
+``

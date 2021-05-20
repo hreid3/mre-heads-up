@@ -234,7 +234,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					parentId: this.root.id,
 					transform: {
 						local: {
-							rotation: {y: 90}
+							rotation: { y: 90 }
 						}
 					},
 					rigidBody: {
@@ -290,7 +290,13 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	}
 
 	public destroy() {
-		this.actorRef.forEach(v => v.destroy());
+		this.actorRef.forEach(v => {
+			v.attachment?.userId && v.detach();
+			if (v.collider) {
+				v.collider.offTrigger('trigger-exit', () => {});
+			}
+			v.destroy();
+		});
 		this.headsUpDownDetector?.destroy();
 		clearInterval(this.gameSessionCountdownTimer as any);
 		clearInterval(this.readyCountdownTimer as any);
