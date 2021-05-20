@@ -10,13 +10,16 @@ import config from "../config";
 const playButtonName = "playButton";
 const playButtonLabel = "label";
 
+const getButtonLabel =
+	(actor: MRE.Actor) => actor.children.find(v=> v.name === playButtonLabel);
+
 export class DeckSelection {
 	private root: MRE.Actor;
 	private gridLayout: MRE.PlanarGridLayout;
 	private decksState: DecksState;
 	private assets: MRE.AssetContainer;
 	private actorDeckMapping: Record<string, Actor> = {};
-	// private playerButtonMapping: Record<string, Actor> = {};
+	private playerButtonMapping: Record<string, Actor> = {};
 	private gameSession: GameSession;
 	private deckCards: Actor[] = [];
 	private playButtonSoundAsset: MRE.Asset;
@@ -30,8 +33,15 @@ export class DeckSelection {
 	public destroy = () => {
 		this.root?.destroy();
 		this.actorDeckMapping = {};
-		// this.playerButtonMapping = {};
-		this.deckCards?.forEach(v => v.destroy());
+		this.playerButtonMapping = {};
+		this.deckCards?.forEach(v => {
+			v.attachment?.userId && v.detach();
+			if (v.collider) {
+				v.collider.offTrigger('trigger-exit', () => {});
+				v.collider.offTrigger('trigger-enter', () => {});
+			}
+			v.destroy();
+		})
 		this.deckCards = [];
 	};
 
@@ -221,6 +231,7 @@ export class DeckSelection {
 				}
 			}
 		);
+		playButton.collider.onTrigger("trigger-enter", () => {});
 
 		const label = MRE.Actor.Create(this.context, {
 			actor: {
@@ -236,32 +247,39 @@ export class DeckSelection {
 				}
 			}
 		});
-		const {disable, default: defaultColor, hover} = theme.color.button;
-		const buttonBehavior = playButton.setBehavior(MRE.ButtonBehavior);
-		buttonBehavior.onHover("enter", ((user, actionData) => {
-			playButton.appearance.material.color = MRE.Color4.FromColor3(hover.background);
-			label.text.color = hover.text;
-		}));
-		buttonBehavior.onHover("exit", ((user, actionData) => {
-			playButton.appearance.material.color =
-				MRE.Color4.FromColor3(this.gameSession?.state === GAME_STATE.Waiting
-					? defaultColor.background : disable.background);
-			label.text.color = this.gameSession?.state === GAME_STATE.Waiting ?
-				defaultColor.text : disable.text;
-		}));
-		buttonBehavior.onClick((user, actionData) => {
-			console.log("clicked");
-			if (this.gameSession.state === GAME_STATE.Playing) {
-				// TODO: Prompt to be sure.
-				store.dispatch(playerDeckCanceled({playerId: user.id.toString()}));
-			} else {
-				this.root.startSound(this.playButtonSoundAsset?.id, { ...config.soundOptions})
-				store.dispatch(playerDeckSelected({selectedDeckId: deck.id, playerId: user.id.toString()}));
-			}
-		});
-		// this.playerButtonMapping[deck.id] = playButton;
+		this.playerButtonMapping[deck.id] = playButton;
 		return playButton;
 	};
+
+	public attachBehaviors = () => {
+		for(const deck of this.decksState.decks) {
+			const playButton = this.playerButtonMapping[deck.id];
+			const label = getButtonLabel(playButton);
+			const {disable, default: defaultColor, hover} = theme.color.button;
+			const buttonBehavior = playButton.setBehavior(MRE.ButtonBehavior);
+			buttonBehavior.onHover("enter", ((user, actionData) => {
+				playButton.appearance.material.color = MRE.Color4.FromColor3(hover.background);
+				label.text.color = hover.text;
+			}));
+			buttonBehavior.onHover("exit", ((user, actionData) => {
+				playButton.appearance.material.color =
+					MRE.Color4.FromColor3(this.gameSession?.state === GAME_STATE.Waiting
+						? defaultColor.background : disable.background);
+				label.text.color = this.gameSession?.state === GAME_STATE.Waiting ?
+					defaultColor.text : disable.text;
+			}));
+			buttonBehavior.onClick((user, actionData) => {
+				console.log("clicked");
+				if (this.gameSession.state === GAME_STATE.Playing) {
+					// TODO: Prompt to be sure.
+					store.dispatch(playerDeckCanceled({playerId: user.id.toString()}));
+				} else {
+					this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions})
+					store.dispatch(playerDeckSelected({selectedDeckId: deck.id, playerId: user.id.toString()}));
+				}
+			});
+		}
+	}
 
 	private getDeckBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.context,
 		{
