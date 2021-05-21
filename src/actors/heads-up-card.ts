@@ -2,8 +2,7 @@ import * as MRE from "@microsoft/mixed-reality-extension-sdk";
 import countdown from "countdown";
 import wordwrap from "word-wrap";
 import config from "../config";
-import { ApplicationState, DecksState, GameSession } from "../models/application";
-import store from "../store";
+import { ApplicationManager, ApplicationState, DecksState, GameSession } from "../models/application";
 import { drawCard, endGameSession, initializeGameSession, recordUserSelection } from "../store/app/actions";
 import { AbstractChangeDetection } from "../store/common/AbstractChangeDetection";
 import theme from "../theme/default";
@@ -34,13 +33,12 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	private endingCountdownSoundAsset: MRE.Asset;
 
 	constructor(
-		private context: MRE.Context,
-		private parent: MRE.Actor,
+		appManager: ApplicationManager,
 		private player: MRE.User,
 		private headsUpCardPrefab: MRE.Prefab
 	) {
-		super();
-		this.assets = new MRE.AssetContainer(this.context);
+		super(appManager);
+		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 		this.startGaming();
 	}
 
@@ -63,21 +61,22 @@ export class HeadsUpCard extends AbstractChangeDetection {
 
 	private startGaming = async () => {
 		// Reset all game values
-		this.decksState = store.getState().decks;
-		this.gameSession = store.getState().app.gameSession;
+		this.decksState = this.appManager.getStore().getState().decks;
+		this.gameSession = this.appManager.getStore().getState().app.gameSession;
 		await delay(config.playStartDelay || 0);
 		const pile = this.decksState.decks.find(v => v.id === this.gameSession?.selectedDeckId)?.cards;
 		if (!pile) {
 			throw Error("Missing pile for " + this.gameSession.selectedDeckId);
 		}
-		store.dispatch(initializeGameSession({pile: shuffle(pile)}));
-		store.dispatch(drawCard({}));
+		this.appManager.getStore().dispatch(initializeGameSession({pile: shuffle(pile)}));
+		this.appManager.getStore().dispatch(drawCard({}));
 		// build card
 		this.buildCard();
 
 		// Start pre-countdown
 		await this.startReadyCountdown();
-		this.headsUpDownDetector = new HeadsUpCollisionDetector(this.context, this.parent, this.player);
+		this.headsUpDownDetector = new HeadsUpCollisionDetector(
+			this.appManager.getContext(), this.appManager.getAppRoot(), this.player);
 		this.headsUpDownDetector.startCollectionDetection(this.handleHeadUpDownEvent);
 		this.readyCountdownLabel.appearance.enabled = false;
 		this.cardTextLabel.appearance.enabled = true;
@@ -100,7 +99,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 
 		this.root.startSound(this.endGameSessionEndSoundAsset?.id, {...soundOptions});
 		await delay(config.timeUpDuration);
-		store.dispatch(endGameSession());
+		this.appManager.getStore().dispatch(endGameSession());
 		console.log("Game Session over");
 	};
 
@@ -126,8 +125,8 @@ export class HeadsUpCard extends AbstractChangeDetection {
 				if (this.headsUpDownDetector.isDetecting()) {
 					this.cardTextLabel.text.contents = "";
 					this.cardTextLabel.text.height = currentText.height;
-					store.dispatch(recordUserSelection(result === "bottom"));
-					store.dispatch(drawCard({}));
+					this.appManager.getStore().dispatch(recordUserSelection(result === "bottom"));
+					this.appManager.getStore().dispatch(drawCard({}));
 					this.background.appearance.material = currentBg;
 				}
 			}, 1000);
@@ -135,14 +134,14 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	};
 
 	protected getBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) =>
-		MRE.Actor.CreateFromPrefab(this.context,
+		MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
 			{
 				prefab: this.headsUpCardPrefab,
 				actor: {
 					parentId: base.id,
 					transform: {
 						local: {
-							position: {x: 0.0, y: 0.8, z: 0.0},
+							position: {x: 0.0, y: 0.8, z: 0.0}
 						}
 					},
 					collider: {
@@ -155,7 +154,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			}
 		);
 
-	buildReadyCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.context, {
+	buildReadyCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
 			appearance: {
@@ -177,7 +176,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		}
 	});
 
-	buildCardTextLabel = (base: MRE.Actor) => MRE.Actor.Create(this.context, {
+	buildCardTextLabel = (base: MRE.Actor) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
 			appearance: {
@@ -199,7 +198,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		}
 	});
 
-	buildGameSessionCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.context, {
+	buildGameSessionCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
 			appearance: {
@@ -225,36 +224,36 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.actorRef = [];
 		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
 		const box = this.assets.createBoxMesh("box", 1.25, 0.8, 0.075);
-		this.root = MRE.Actor.Create(this.context, {
+		this.root = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: "HeadsUpCardRoot",
-				parentId: this.parent.id
+				parentId: this.appManager.getAppRoot().id
 			}
 		});
-		const base = MRE.Actor.Create(this.context,
+		const base = MRE.Actor.Create(this.appManager.getContext(),
 			{
 				actor: {
 					parentId: this.root.id,
 					transform: {
 						local: {
-							rotation: { y: 90 },
+							rotation: {y: 90}
 						}
 					},
 					rigidBody: {
 						isKinematic: true,
 						useGravity: false,
-						mass: 0.1,
+						mass: 0.1
 					},
 					collider: {
 						geometry: {
-							shape: MRE.ColliderType.Auto,
+							shape: MRE.ColliderType.Auto
 						},
-						isTrigger: false,
+						isTrigger: false
 					}
 				}
 			});
 		if (this.player) {
-			base.collider.onTrigger('trigger-enter', () => {
+			base.collider.onTrigger("trigger-enter", () => {
 				console.log("wtf");
 			});
 			base.attach(this.player.id, "head");
@@ -298,7 +297,8 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.actorRef.forEach(v => {
 			v.attachment?.userId && v.detach();
 			if (v.collider) {
-				v.collider.offTrigger('trigger-exit', () => {});
+				v.collider.offTrigger("trigger-exit", () => {
+				});
 			}
 			v.destroy();
 		});
