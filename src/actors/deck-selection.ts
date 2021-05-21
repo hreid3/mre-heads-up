@@ -1,17 +1,16 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
 import { Actor } from "@microsoft/mixed-reality-extension-sdk";
 import wordwrap from "word-wrap";
-import { Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/application";
-import store from "../store";
+import config from "../config";
+import { ApplicationManager, Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/application";
 import { playerDeckCanceled, playerDeckSelected } from "../store/app/actions";
 import theme from "../theme/default";
-import config from "../config";
 
 const playButtonName = "playButton";
 const playButtonLabel = "label";
 
 const getButtonLabel =
-	(actor: MRE.Actor) => actor.children.find(v=> v.name === playButtonLabel);
+	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
 
 export class DeckSelection {
 	private root: MRE.Actor;
@@ -24,8 +23,8 @@ export class DeckSelection {
 	private deckCards: Actor[] = [];
 	private playButtonSoundAsset: MRE.Asset;
 
-	constructor(private context: MRE.Context, private parent: MRE.Actor) {
-		this.assets = new MRE.AssetContainer(this.context);
+	constructor(private appManager: ApplicationManager) {
+		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 		this.setup();
 		this.detectChanges();
 	}
@@ -37,11 +36,13 @@ export class DeckSelection {
 		this.deckCards?.forEach(v => {
 			v.attachment?.userId && v.detach();
 			if (v.collider) {
-				v.collider.offTrigger('trigger-exit', () => {});
-				v.collider.offTrigger('trigger-enter', () => {});
+				v.collider.offTrigger("trigger-exit", () => {
+				});
+				v.collider.offTrigger("trigger-enter", () => {
+				});
 			}
 			v.destroy();
-		})
+		});
 		this.deckCards = [];
 	};
 
@@ -87,9 +88,9 @@ export class DeckSelection {
 	};
 
 	protected detectChanges = () => {
-		store.subscribe(() => {
-			const decks = store.getState().decks;
-			const gameSession = store.getState().app.gameSession;
+		this.appManager.getStore().subscribe(() => {
+			const decks = this.appManager.getStore().getState().decks;
+			const gameSession = this.appManager.getStore().getState().app.gameSession;
 			if (this.decksState !== decks) {
 				this.decksState = decks;
 				this.destroy();
@@ -114,10 +115,10 @@ export class DeckSelection {
 
 	private setup = () => {
 		console.log("Decks change detected");
-		this.root = MRE.Actor.Create(this.context, {
+		this.root = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: "DeckSelectionRoot",
-				parentId: this.parent.id
+				parentId: this.appManager.getAppRoot().id
 			}
 		});
 		this.deckCards = [];
@@ -132,8 +133,8 @@ export class DeckSelection {
 			this.layoutCards(this.deckCards);
 		}
 		this.playButtonSoundAsset = this.assets.createSound(
-			'final-count-down',
-			{ uri: `/sounds/play-button.wav` },
+			"final-count-down",
+			{uri: `/sounds/play-button.wav`}
 		);
 
 	};
@@ -153,7 +154,7 @@ export class DeckSelection {
 		this.gridLayout.applyLayout();
 	};
 	// eslint-disable-next-line max-len
-	private getDeckTitle = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.context, {
+	private getDeckTitle = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
 			appearance: {
@@ -178,7 +179,7 @@ export class DeckSelection {
 	});
 
 	// eslint-disable-next-line max-len
-	private getDeckDesc = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.context, {
+	private getDeckDesc = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
 			appearance: {
@@ -206,7 +207,7 @@ export class DeckSelection {
 	private getPlayButton = (base: MRE.Actor, deck: Deck) => {
 		const mat = this.assets.createMaterial("mat", {color: theme.color.button.default.background});
 		const box = this.assets.createBoxMesh("box", 0.3, 0.1, 0.05);
-		const playButton = MRE.Actor.Create(this.context,
+		const playButton = MRE.Actor.Create(this.appManager.getContext(),
 			{
 				actor: {
 					parentId: base.id,
@@ -231,9 +232,10 @@ export class DeckSelection {
 				}
 			}
 		);
-		playButton.collider.onTrigger("trigger-enter", () => {});
+		playButton.collider.onTrigger("trigger-enter", () => {
+		});
 
-		const label = MRE.Actor.Create(this.context, {
+		const label = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: playButtonLabel,
 				parentId: playButton.id,
@@ -252,7 +254,7 @@ export class DeckSelection {
 	};
 
 	public attachBehaviors = () => {
-		for(const deck of this.decksState.decks) {
+		for (const deck of this.decksState.decks) {
 			const playButton = this.playerButtonMapping[deck.id];
 			const label = getButtonLabel(playButton);
 			const {disable, default: defaultColor, hover} = theme.color.button;
@@ -272,16 +274,20 @@ export class DeckSelection {
 				console.log("clicked");
 				if (this.gameSession.state === GAME_STATE.Playing) {
 					// TODO: Prompt to be sure.
-					store.dispatch(playerDeckCanceled({playerId: user.id.toString()}));
+					this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
 				} else {
-					this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions})
-					store.dispatch(playerDeckSelected({selectedDeckId: deck.id, playerId: user.id.toString()}));
+					this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions});
+					this.appManager.getStore().dispatch(playerDeckSelected({
+						selectedDeckId: deck.id,
+						playerId: user.id.toString()
+					}));
 				}
 			});
 		}
-	}
+	};
 
-	private getDeckBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.context,
+	// eslint-disable-next-line max-len
+	private getDeckBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.appManager.getContext(),
 		{
 			actor: {
 				parentId: base.id,
@@ -312,7 +318,7 @@ export class DeckSelection {
 	private createDeck = (deck: Deck) => {
 		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
 		const box = this.assets.createBoxMesh("box", 0.8, 1, 0.075);
-		const base = MRE.Actor.Create(this.context, {actor: {parentId: this.root.id}});
+		const base = MRE.Actor.Create(this.appManager.getContext(), {actor: {parentId: this.root.id}});
 		this.getDeckBackground(base, mat, box);
 		const title = this.getDeckTitle(deck, base, box, mat);
 		const description = this.getDeckDesc(deck, base, box, mat);

@@ -1,18 +1,17 @@
-import { ApplicationState, GameSession } from "../../models/application";
-import store from "../index";
+import { ApplicationManager, ApplicationState, GameSession } from "../../models/application";
 
 export abstract class AbstractChangeDetection {
 	protected gameSession: GameSession;
 	protected applicationState: ApplicationState;
 
-	constructor() {
+	constructor(protected appManager: ApplicationManager) {
 		this.detectChanges();
 	}
 
 	protected detectChanges = () => {
-		store.subscribe(() => {
-			const gameSession = store.getState().app.gameSession;
-			const applicatiionState = store.getState().app;
+		this.appManager.getStore().subscribe(() => {
+			const gameSession = this.appManager.getStore().getState().app.gameSession;
+			const applicatiionState = this.appManager.getStore().getState().app;
 			if (this.gameSession !== gameSession) {
 				const prev = this.gameSession;
 				this.gameSession = gameSession;
@@ -29,8 +28,8 @@ export abstract class AbstractChangeDetection {
 					}
 				}
 			}
-		})
-	}
+		});
+	};
 
 	abstract handleGameSessionChanged(prev: GameSession): void;
 
