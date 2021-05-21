@@ -24,8 +24,8 @@ function runApp() {
 	const server = new MRE.WebHost({
 		baseDir: resolvePath(__dirname, '../public'),
 		// baseUrl: 'http://108.72.45.167:3902',
-		baseUrl: 'http://192.168.2.35:3902',
-		port: 3902,
+		baseUrl: process.env.BASE_URL,
+		port: process.env.PORT,
 	});
 
 	// Handle new application sessions
