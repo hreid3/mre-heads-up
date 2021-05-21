@@ -22,17 +22,19 @@ export default class App implements ApplicationManager {
 	private appRoot: MRE.Actor;
 	private gameSession: GameSession;
 	private headsUpCard: HeadsUpCard;
-	private assets: MRE.AssetContainer;
+	private assetContainer: MRE.AssetContainer;
 	private gameSessionResults: GameSessionResults;
 	private headsUpCardPrefab: MRE.Prefab;
 	private store: Store<AppState>;
+	private assets: MRE.Asset[] = [];
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet) {
 		console.log("constructed", this.context.sessionId);
 		this.store = createStore();
-		this.assets = new MRE.AssetContainer(this.context);
-		this.assets.loadGltf("/models/heads-up-card.glb", "box")
+		this.assetContainer = new MRE.AssetContainer(this.context);
+		this.assetContainer.loadGltf("/models/heads-up-card.glb", "box")
 			.then(headsUpCardPrefabLoader => {
+				this.assets = [...this.assets, ...headsUpCardPrefabLoader];
 				this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
 			});
 		this.context.onStarted(this.started);
@@ -43,8 +45,9 @@ export default class App implements ApplicationManager {
 
 	getContext = () => this.context;
 	getAppRoot = () => this.appRoot;
-	getAssetsContainer = () => this.assets;
+	getAssetsContainer = () => this.assetContainer;
 	getStore = () => this.store;
+	getAssets = () => this.assets;
 
 	private handleUserJoined = (user: MRE.User) => {
 		this.deckSelection.attachBehaviors();

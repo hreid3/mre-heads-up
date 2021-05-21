@@ -61,4 +61,5 @@ export interface ApplicationManager {
 	getAppRoot: () => MRE.Actor;
 	getAssetsContainer: () => MRE.AssetContainer;
 	getStore: () => Store<AppState>;
+	getAssets: () => MRE.Asset[];
 }
