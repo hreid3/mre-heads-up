@@ -5,6 +5,11 @@ The popular game heads-up in VR.
 ```
 npm install
 cp .env.template .env
+```
+
+Update the `.env` file with BASE_URL and Port
+
+```
 npm run build
 npm start
 ```
