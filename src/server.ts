@@ -25,7 +25,7 @@ function runApp() {
 		baseDir: resolvePath(__dirname, '../public'),
 		// baseUrl: 'http://108.72.45.167:3902',
 		baseUrl: process.env.BASE_URL,
-		port: process.env.PORT,
+		port: process.env.MRE_PORT,
 	});
 
 	// Handle new application sessions
