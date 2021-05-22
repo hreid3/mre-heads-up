@@ -274,12 +274,12 @@ export class DeckSelection {
 		deckCardBehavior.onClick(user => {
 			if (this.gameSession.state === GAME_STATE.Waiting) {
 				const scaleFactor = 1.5;
-				const lastFippedCard = this.decksState.decks.find(value => value.flipped);
-				const lastFlippedCardId = lastFippedCard?.id;
+				const lastFlippedCard = this.decksState.decks.find(value => value.flipped);
+				const lastFlippedCardId = lastFlippedCard?.id;
 				if (lastFlippedCardId) { // Flip the existing card
 					this.appManager.getStore().dispatch(setFlipDeck({id: lastFlippedCardId, flipped: false}));
 					const otherCardBase = this.deckCards
-						.find(value => `${DECK_CARD_PREFIX}${lastFippedCard.name}` === value.name);
+						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
 					// TODO: Kevin to Animate
 					otherCardBase.transform.local.rotation.y = 0;
 					otherCardBase.transform.local.position.z = 0;
@@ -320,18 +320,20 @@ export class DeckSelection {
 					defaultColor.text : disable.text;
 			}));
 			buttonBehavior.onClick((user, actionData) => {
-				console.log("clicked");
-				if (this.gameSession.state === GAME_STATE.Playing) {
-					// TODO: Prompt to be sure.
-					this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
-					label.text.contents = "Play";
-				} else {
-					this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions});
-					label.text.contents = "Cancel";
-					this.appManager.getStore().dispatch(playerDeckSelected({
-						selectedDeckId: deck.id,
-						playerId: user.id.toString()
-					}));
+				const flippedCard = this.decksState.decks.find(value => value.flipped);
+				if(flippedCard?.id === deck.id) {
+					if (this.gameSession.state === GAME_STATE.Playing) {
+						// TODO: Prompt to be sure.
+						this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
+						label.text.contents = "Play";
+					} else {
+						this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions});
+						label.text.contents = "Cancel";
+						this.appManager.getStore().dispatch(playerDeckSelected({
+							selectedDeckId: deck.id,
+							playerId: user.id.toString()
+						}));
+					}
 				}
 			});
 		} catch (error) {
