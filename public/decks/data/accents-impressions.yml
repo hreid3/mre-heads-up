@@ -1,0 +1,39 @@
+name: Accents & Impressions
+enabled: True
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/accents-impressions.glb
+cards:
+  - Arnold Schwarzenegger
+  - British
+  - Cartman
+  - Scottish
+  - Gollum
+  - Sean Connery
+  - Japanese
+  - Sarah Palin
+  - Midwestern
+  - New Yorker
+  - Darth Vader
+  - Brooklyn
+  - Cockney
+  - Donald Duck
+  - Donald Trump
+  - Valley Girl
+  - Scooby Doo
+  - Mike Tyson
+  - Long Islander
+  - Yoda
+  - Astro Jetson
+  - Georgian
+  - Sylvester Stallone
+  - Ned Flanders
+  - C3P0
+  - Texan
+  - John  Wayne
+  - Breaker
+  - Daffy Duck
+  - Chris Rock
+  - Southern
+  - Country
+  - Spanish
