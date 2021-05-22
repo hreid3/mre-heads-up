@@ -10,8 +10,17 @@ import delay from "../utils/delay";
 import shuffle from "../utils/shuffle";
 import { HeadsUpCollisionDetector } from "./heads-up-collision-detector";
 
+
+
 const CARD_TEXT_HEIGHT = 0.18;
 const soundOptions = config.soundOptions;
+
+const BounceScaleKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
+	{ time: 0, value: { x: 1.33, y: 0.667, z: 1.33 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
+	{ time: 0.15, value: { x: 0.667, y: 1.33, z: 0.667 } },
+	{ time: 0.85, value: { x: 0.667, y: 1.33, z: 0.667 }, easing: MRE.AnimationEaseCurves.Step },
+	{ time: 1, value: { x: 1.33, y: 0.667, z: 1.33 } },
+];
 
 export class HeadsUpCard extends AbstractChangeDetection {
 	private root: MRE.Actor;
@@ -57,6 +66,24 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
 			// }
 		}
+		const pulseAnimData = this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Pulse",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.scale,
+					keyframes: BounceScaleKeyframes,
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+				}]
+			});
+			pulseAnimData.bind(
+				{target: this.gameSessionCountdownLabel},
+				{name: "Pulsing"}
+			)
 	};
 
 	private startGaming = async () => {
@@ -132,7 +159,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			}, 1000);
 		}
 	};
-
+	
 	protected getBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) =>
 		MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
 			{
@@ -153,7 +180,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 				}
 			}
 		);
-
+	
 	buildReadyCountdownLabel = (base: MRE.Actor) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
 			parentId: base.id,
@@ -219,6 +246,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			}
 		}
 	});
+
 
 	buildCard = () => {
 		this.actorRef = [];
@@ -352,6 +380,11 @@ export class HeadsUpCard extends AbstractChangeDetection {
 							// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 							// @ts-ignore
 							clearInterval(__this.gameSessionCountdownTimer);
+						}
+						if (ts.seconds < 11 && ts.minutes < 1){
+							__this.gameSessionCountdownLabel.text.color = MRE.Color3.Red()
+							__this.gameSessionCountdownLabel.transform
+							__this.gameSessionCountdownLabel.targetingAnimationsByName.get("Pulsing").play();
 						}
 					},
 					countdown.SECONDS | countdown.MINUTES);
