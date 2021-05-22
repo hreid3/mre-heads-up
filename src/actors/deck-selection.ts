@@ -144,7 +144,6 @@ export class DeckSelection {
 			"final-count-down",
 			{uri: `/sounds/play-button.wav`}
 		);
-
 	};
 
 	private layoutCards = (deckCards: Actor[]) => {
@@ -155,7 +154,7 @@ export class DeckSelection {
 				row: 0,
 				height: 1,
 				column: i++,
-				width: 0.9,
+				width: 0.55,
 				contents: deckCard
 			});
 		}
