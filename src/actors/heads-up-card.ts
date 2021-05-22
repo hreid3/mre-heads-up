@@ -16,10 +16,10 @@ const CARD_TEXT_HEIGHT = 0.18;
 const soundOptions = config.soundOptions;
 
 const BounceScaleKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
-	{ time: 0, value: { x: 1.33, y: 0.667, z: 1.33 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
-	{ time: 0.15, value: { x: 0.667, y: 1.33, z: 0.667 } },
-	{ time: 0.85, value: { x: 0.667, y: 1.33, z: 0.667 }, easing: MRE.AnimationEaseCurves.Step },
-	{ time: 1, value: { x: 1.33, y: 0.667, z: 1.33 } },
+	{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
+	{ time: 0.10, value: {  x: 1.5, y: 1.5, z: 1.5 } },
+	{ time: 0.20, value: { x: 1.5, y: 1.5, z: 1.5 }, easing: MRE.AnimationEaseCurves.Step },
+	{ time: 0.30, value: { x: 1, y: 1, z: 1 } },
 ];
 
 export class HeadsUpCard extends AbstractChangeDetection {
@@ -66,24 +66,24 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
 			// }
 		}
-		const pulseAnimData = this.assets.createAnimationData(
-			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
-			// but it's merely descriptive in this sample.
-			"Pulse",
-			{
-				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
-				// and the values you want to change it to.
-				tracks: [{
-					// This animation targets the rotation of an actor named "text"
-					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: BounceScaleKeyframes,
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-				}]
-			});
-			pulseAnimData.bind(
-				{target: this.gameSessionCountdownLabel},
-				{name: "Pulsing"}
-			)
+		// const pulseAnimData = this.assets.createAnimationData(
+		// 	// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+		// 	// but it's merely descriptive in this sample.
+		// 	"Pulse",
+		// 	{
+		// 		// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+		// 		// and the values you want to change it to.
+		// 		tracks: [{
+		// 			// This animation targets the rotation of an actor named "text"
+		// 			target: MRE.ActorPath("target").transform.local.scale,
+		// 			keyframes: BounceScaleKeyframes,
+		// 			easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+		// 		}]
+		// 	});
+		// 	pulseAnimData.bind(
+		// 		{target: this.gameSessionCountdownLabel},
+		// 		{name: "Pulsing"}
+		// 	)
 	};
 
 	private startGaming = async () => {
@@ -360,6 +360,24 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	};
 
 	protected startGameSessionCountdown = () => {
+		const pulseAnimData = this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Pulse",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.scale,
+					keyframes: BounceScaleKeyframes,
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+				}]
+			});
+			pulseAnimData.bind(
+				{target: this.gameSessionCountdownLabel},
+				{name: "Pulsing"}
+			)
 		this.gameSessionCountdownLabel.appearance.enabled = true;
 		return new Promise(((resolve) => {
 			// eslint-disable-next-line @typescript-eslint/no-this-alias
