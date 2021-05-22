@@ -1,5 +1,5 @@
 name: Superstars
-enabled: True
+enabled: False
 description: Not applicable
 type: text
 prefabUri: /decks/prefab/superstars.glb

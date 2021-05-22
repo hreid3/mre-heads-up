@@ -293,8 +293,10 @@ export class DeckSelection {
 
 	public attachBehaviors = () => {
 		for (const deck of this.decksState.decks) {
-			this.attachPlayButtonBehaviors(deck);
-			this.attachDeckCardBehaviors(deck);
+			if (deck.enabled) {
+				this.attachPlayButtonBehaviors(deck);
+				this.attachDeckCardBehaviors(deck);
+			}
 		}
 	};
 
@@ -308,8 +310,9 @@ export class DeckSelection {
 
 		});
 		deckCardBehavior.onClick(user => {
-			const updatedDeck = this.decksState.decks.find(value => value.id === deck.id);
-			if (!updatedDeck.flipped) {
+			const updatedDeck =
+				this.decksState.decks.filter(value => value.enabled).find(value => value.id === deck.id);
+			if (!updatedDeck?.flipped) {
 				// Flip the card and activate the playbutton
 				deckBase.transform.local.rotation.y = 90;
 			} else {
@@ -321,36 +324,40 @@ export class DeckSelection {
 	}
 
 	protected attachPlayButtonBehaviors = (deck: Deck) => {
-		const playButton = this.playerButtonMapping[deck.id];
-		const label = getButtonLabel(playButton);
-		const {disable, default: defaultColor, hover} = theme.color.button;
-		const buttonBehavior = playButton.setBehavior(MRE.ButtonBehavior);
-		buttonBehavior.onHover("enter", ((user, actionData) => {
-			playButton.appearance.material.color = MRE.Color4.FromColor3(hover.background);
-			label.text.color = hover.text;
-		}));
-		buttonBehavior.onHover("exit", ((user, actionData) => {
-			playButton.appearance.material.color =
-				MRE.Color4.FromColor3(this.gameSession?.state === GAME_STATE.Waiting
-					? defaultColor.background : disable.background);
-			label.text.color = this.gameSession?.state === GAME_STATE.Waiting ?
-				defaultColor.text : disable.text;
-		}));
-		buttonBehavior.onClick((user, actionData) => {
-			console.log("clicked");
-			if (this.gameSession.state === GAME_STATE.Playing) {
-				// TODO: Prompt to be sure.
-				this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
-				label.text.contents = 'Play';
-			} else {
-				this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions });
-				label.text.contents = 'Cancel';
-				this.appManager.getStore().dispatch(playerDeckSelected({
-					selectedDeckId: deck.id,
-					playerId: user.id.toString()
-				}));
-			}
-		});
+		try {
+			const playButton = this.playerButtonMapping[deck.id];
+			const label = getButtonLabel(playButton);
+			const {disable, default: defaultColor, hover} = theme.color.button;
+			const buttonBehavior = playButton.setBehavior(MRE.ButtonBehavior);
+			buttonBehavior.onHover("enter", ((user, actionData) => {
+				playButton.appearance.material.color = MRE.Color4.FromColor3(hover.background);
+				label.text.color = hover.text;
+			}));
+			buttonBehavior.onHover("exit", ((user, actionData) => {
+				playButton.appearance.material.color =
+					MRE.Color4.FromColor3(this.gameSession?.state === GAME_STATE.Waiting
+						? defaultColor.background : disable.background);
+				label.text.color = this.gameSession?.state === GAME_STATE.Waiting ?
+					defaultColor.text : disable.text;
+			}));
+			buttonBehavior.onClick((user, actionData) => {
+				console.log("clicked");
+				if (this.gameSession.state === GAME_STATE.Playing) {
+					// TODO: Prompt to be sure.
+					this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
+					label.text.contents = 'Play';
+				} else {
+					this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions});
+					label.text.contents = 'Cancel';
+					this.appManager.getStore().dispatch(playerDeckSelected({
+						selectedDeckId: deck.id,
+						playerId: user.id.toString()
+					}));
+				}
+			});
+		} catch (error) {
+			console.error("Error attaching behaviors for", deck);
+		}
 	}
 
 	// eslint-disable-next-line max-len

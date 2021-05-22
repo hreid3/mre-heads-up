@@ -1,5 +1,5 @@
 name: Animals Gone Wild
-enabled: True
+enabled: False
 description: Not applicable
 type: text
 prefabUri: /decks/prefab/animals-gone-wild.glb
