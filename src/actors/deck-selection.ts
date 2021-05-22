@@ -50,25 +50,25 @@ export class DeckSelection {
 	};
 
 	public setOnlyDeckSelected = (value: boolean, selectedDeckId?: ID) => {
-		const setBtnLbl = (actor: MRE.Actor, label: string, setDefaultColor?: boolean) => {
-			const children = actor.children;
-			for (const child of children) {
-				if (child.name === playButtonName) {
-					const grandChildren = child.children;
-					for (const grandChild of grandChildren) {
-						if (grandChild.name === playButtonLabel) {
-							grandChild.text.contents = label;
-							if (setDefaultColor) {
-								grandChild.text.color = theme.color.button.default.text;
-							}
-						}
-					}
-					if (setDefaultColor) {
-						child.appearance.material.color = MRE.Color4.FromColor3(theme.color.button.default.background);
-					}
-				}
-			}
-		};
+		// const setBtnLbl = (actor: MRE.Actor, label: string, setDefaultColor?: boolean) => {
+		// 	const children = actor.children;
+		// 	for (const child of children) {
+		// 		if (child.name === playButtonName) {
+		// 			const grandChildren = child.children;
+		// 			for (const grandChild of grandChildren) {
+		// 				if (grandChild.name === playButtonLabel) {
+		// 					grandChild.text.contents = label;
+		// 					if (setDefaultColor) {
+		// 						grandChild.text.color = theme.color.button.default.text;
+		// 					}
+		// 				}
+		// 			}
+		// 			if (setDefaultColor) {
+		// 				child.appearance.material.color = MRE.Color4.FromColor3(theme.color.button.default.background);
+		// 			}
+		// 		}
+		// 	}
+		// };
 		// if (this.decksState.decks) {
 		// 	if (value && selectedDeckId) {
 		// 		for (const deck of this.decksState.decks) {
@@ -272,7 +272,7 @@ export class DeckSelection {
 		playButton.collider.onTrigger("trigger-enter", () => {
 		});
 		console.log("Horace", { ...base.transform.local.rotation })
-		const label = MRE.Actor.Create(this.appManager.getContext(), {
+		MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: playButtonLabel,
 				parentId: playButton.id,
@@ -384,8 +384,8 @@ export class DeckSelection {
 	);
 
 	private createDeck = (deck: Deck) => {
-		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
-		const box = this.assets.createBoxMesh("box", 0.8, 1, 0.075);
+		// const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
+		// const box = this.assets.createBoxMesh("box", 0.8, 1, 0.075);
 		const base = MRE.Actor.Create(
 			this.appManager.getContext(), {
 				actor: {
