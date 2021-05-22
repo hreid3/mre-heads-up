@@ -13,5 +13,5 @@ export const loadDecksSuccess = createAction(
 
 export const setFlipDeck = createAction(
 	SET_FLIP_DECK,
-	withPayloadType<{id: ID; flipped: boolean}>()
+	withPayloadType<{ id: ID; flipped: boolean }>()
 );
