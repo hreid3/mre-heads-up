@@ -26,6 +26,7 @@ export default class App implements ApplicationManager {
 	private assetContainer: MRE.AssetContainer;
 	private gameSessionResults: GameSessionResults;
 	private headsUpCardPrefab: MRE.Prefab;
+	private backgroundPrefab: MRE.Prefab;
 	private store: Store<AppState>;
 	private assets: MRE.Asset[] = [];
 
@@ -33,11 +34,14 @@ export default class App implements ApplicationManager {
 		console.log("constructed", this.context.sessionId);
 		this.store = createStore();
 		this.assetContainer = new MRE.AssetContainer(this.context);
-		this.assetContainer.loadGltf("/models/heads-up-card.glb", "box")
-			.then(headsUpCardPrefabLoader => {
-				this.assets = [...this.assets, ...headsUpCardPrefabLoader];
-				this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
-			});
+		Promise.all([
+			this.assetContainer.loadGltf("/models/heads-up-card.glb", "box"),
+			this.assetContainer.loadGltf("/models/common-background-3.glb", "box")
+		]).then(([headsUpCardPrefabLoader, backgroundPrefabLoader] )=> {
+			this.assets.push( ...headsUpCardPrefabLoader, ...backgroundPrefabLoader);
+			this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
+			this.backgroundPrefab = backgroundPrefabLoader.find(a => a.prefab !== null).prefab;
+		});
 		this.context.onStarted(this.started);
 		this.context.onStopped(this.stopped);
 		this.context.onUserLeft(this.handleUserLeft);
@@ -63,12 +67,13 @@ export default class App implements ApplicationManager {
 	};
 
 	private started = async () => {
+		await block(() => !!this.getAssets().length);
 		this.appRoot = MRE.Actor.Create(this.context, {actor: {name: "AppRoot"}});
 		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 		// @ts-ignore
 		this.store.dispatch(loadDecksFromFileSystem());
 		await block(() => !!this.getStore().getState().decks.decks.length)
-		this.deckSelection = new DeckSelection(this);
+		this.deckSelection = new DeckSelection(this, this.backgroundPrefab);
 		this.gameSessionResults = new GameSessionResults(this);
 		// Listen for game start events
 		this.detectChanges();
