@@ -23,11 +23,12 @@ export class DeckSelection {
 	private actorDeckMapping: Record<string, Actor> = {};
 	private playerButtonMapping: Record<string, Actor> = {};
 	private gameSession: GameSession;
-	private deckCards: Actor[] = [];
+	private deckCards: MRE.Actor[] = [];
+	private backDrop: MRE.Actor;
 	private playButtonSoundAsset: MRE.Asset;
 	private assetContainer: MRE.AssetContainer;
 
-	constructor(private appManager: ApplicationManager) {
+	constructor(private appManager: ApplicationManager, private prefab: MRE.Prefab) {
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 		this.setup();
 		this.detectChanges();
@@ -103,24 +104,51 @@ export class DeckSelection {
 		}
 		this.playButtonSoundAsset = this.assets.createSound(
 			"final-count-down",
-			{uri: `/sounds/play-button.wav`}
+			{ uri: `/sounds/play-button.wav` }
 		);
 	};
 
 	private layoutCards = (deckCards: Actor[]) => {
 		let i = 0;
+		const MAX_COL = 5;
+		let row = 0;
 		this.gridLayout = new MRE.PlanarGridLayout(this.root);
 		for (const deckCard of deckCards) {
+			if (i % MAX_COL === 0) {
+				row++;
+			}
 			this.gridLayout.addCell({
-				row: 0,
-				height: 1,
-				column: i++,
-				width: 0.55,
+				row: row,
+				height: 0.80,
+				column: i % MAX_COL,
+				width: 0.56,
 				contents: deckCard
 			});
+			i++;
 		}
 		this.gridLayout.applyLayout();
+		this.backDrop = MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
+			{
+				prefab: this.prefab,
+				actor: {
+					parentId: this.root.id,
+					transform: {
+						local: {
+							scale: { x: 1.0, y: (0.31 * row) - 0.02, z: 0.5 }
+						}
+					},
+					collider: {
+						geometry: {
+							shape: MRE.ColliderType.Auto
+						},
+						isTrigger: true
+					}
+				}
+			}
+		);
+		this.backDrop.collider.onTrigger("trigger-enter", noop);
 	};
+
 	// eslint-disable-next-line max-len
 	private getDeckTitle = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
@@ -132,7 +160,7 @@ export class DeckSelection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0, z: -0.05}
+					position: { x: 0, y: 0, z: -0.05 }
 				}
 			},
 			text: {
@@ -157,12 +185,12 @@ export class DeckSelection {
 			},
 			transform: {
 				local: {
-					position: {z: -0.05}
+					position: { z: -0.05 }
 				}
 			},
 			text: {
 				pixelsPerLine: 12,
-				contents: `${wordwrap(deck.description, {width: 40})}`,
+				contents: `${wordwrap(deck.description, { width: 40 })}`,
 				height: 0.035,
 				anchor: MRE.TextAnchorLocation.MiddleCenter,
 				justify: MRE.TextJustify.Left,
@@ -185,7 +213,7 @@ export class DeckSelection {
 					parentId: base.id,
 					transform: {
 						local: {
-							position: {x: 0.0, y: 0.0, z: 0.0}
+							position: { x: 0.0, y: 0.0, z: 0.0 }
 						}
 					},
 					collider: {
@@ -200,7 +228,7 @@ export class DeckSelection {
 	};
 
 	private getPlayButton = (base: MRE.Actor, deck: Deck) => {
-		const mat = this.assets.createMaterial("mat", {color: theme.color.button.default.background});
+		const mat = this.assets.createMaterial("mat", { color: theme.color.button.default.background });
 		const box = this.assets.createBoxMesh("box", 0.22, 0.075, 0.0005);
 		const playButton = MRE.Actor.Create(this.appManager.getContext(),
 			{
@@ -214,7 +242,7 @@ export class DeckSelection {
 					},
 					transform: {
 						local: {
-							position: {x: -0.122, y: -0.27, z: 0.0015},
+							position: { x: -0.122, y: -0.27, z: 0.0015 },
 							rotation: base.transform.local.rotation
 						}
 					},
@@ -234,8 +262,8 @@ export class DeckSelection {
 				parentId: playButton.id,
 				transform: {
 					local: {
-						position: {z: 0.005, y: 0},
-						rotation: {y: 45}
+						position: { z: 0.005, y: 0 },
+						rotation: { y: 45 }
 					}
 				},
 				text: {
@@ -277,7 +305,7 @@ export class DeckSelection {
 				const lastFlippedCard = this.decksState.decks.find(value => value.flipped);
 				const lastFlippedCardId = lastFlippedCard?.id;
 				if (lastFlippedCardId) { // Flip the existing card
-					this.appManager.getStore().dispatch(setFlipDeck({id: lastFlippedCardId, flipped: false}));
+					this.appManager.getStore().dispatch(setFlipDeck({ id: lastFlippedCardId, flipped: false }));
 					const otherCardBase = this.deckCards
 						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
 					// TODO: Kevin to Animate
@@ -296,7 +324,7 @@ export class DeckSelection {
 					deckBase.transform.local.scale.y = deckBase.transform.local.scale.y * scaleFactor;
 					deckBase.transform.local.scale.z = deckBase.transform.local.scale.z * scaleFactor;
 
-					this.appManager.getStore().dispatch(setFlipDeck({id: deck.id, flipped: true}));
+					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
 				}
 			}
 		});
@@ -306,7 +334,7 @@ export class DeckSelection {
 		try {
 			const playButton = this.playerButtonMapping[deck.id];
 			const label = getButtonLabel(playButton);
-			const {disable, default: defaultColor, hover} = theme.color.button;
+			const { disable, default: defaultColor, hover } = theme.color.button;
 			const buttonBehavior = playButton.setBehavior(MRE.ButtonBehavior);
 			buttonBehavior.onHover("enter", ((user, actionData) => {
 				playButton.appearance.material.color = MRE.Color4.FromColor3(hover.background);
@@ -321,13 +349,13 @@ export class DeckSelection {
 			}));
 			buttonBehavior.onClick((user, actionData) => {
 				const flippedCard = this.decksState.decks.find(value => value.flipped);
-				if(flippedCard?.id === deck.id) {
+				if (flippedCard?.id === deck.id) {
 					if (this.gameSession.state === GAME_STATE.Playing) {
 						// TODO: Prompt to be sure.
-						this.appManager.getStore().dispatch(playerDeckCanceled({playerId: user.id.toString()}));
+						this.appManager.getStore().dispatch(playerDeckCanceled({ playerId: user.id.toString() }));
 						label.text.contents = "Play";
 					} else {
-						this.root.startSound(this.playButtonSoundAsset?.id, {...config.soundOptions});
+						this.root.startSound(this.playButtonSoundAsset?.id, { ...config.soundOptions });
 						label.text.contents = "Cancel";
 						this.appManager.getStore().dispatch(playerDeckSelected({
 							selectedDeckId: deck.id,
@@ -353,7 +381,7 @@ export class DeckSelection {
 				},
 				transform: {
 					local: {
-						position: {x: 0.0, y: -0.1, z: 0.0}
+						position: { x: 0.0, y: -0.1, z: 0.0 }
 					}
 				},
 				collider: {
@@ -373,7 +401,7 @@ export class DeckSelection {
 				actor: {
 					name: `${DECK_CARD_PREFIX}${deck.name}`,
 					parentId: this.root.id,
-					transform: {local: {rotation: {y: deck.flipped ? 9 : 0}}},
+					transform: { local: { rotation: { y: deck.flipped ? 9 : 0 } } },
 					collider: {
 						geometry: {
 							shape: MRE.ColliderType.Auto
