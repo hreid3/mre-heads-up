@@ -13,12 +13,19 @@ import { HeadsUpCollisionDetector } from "./heads-up-collision-detector";
 const CARD_TEXT_HEIGHT = 0.18;
 const soundOptions = config.soundOptions;
 
+const BounceScaleKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
+	{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
+	{ time: 0.10, value: { x: 1.5, y: 1.5, z: 1.5 } },
+	{ time: 0.20, value: { x: 1.5, y: 1.5, z: 1.5 }, easing: MRE.AnimationEaseCurves.Step },
+	{ time: 0.30, value: { x: 1, y: 1, z: 1 } },
+];
+
 export class HeadsUpCard extends AbstractChangeDetection {
 	private root: MRE.Actor;
 	private decksState: DecksState;
 	private assets: MRE.AssetContainer;
-	private readyCountdownTimer: countdown.Timespan|number;
-	private gameSessionCountdownTimer: countdown.Timespan|number;
+	private readyCountdownTimer: countdown.Timespan | number;
+	private gameSessionCountdownTimer: countdown.Timespan | number;
 	private cardTextLabel: MRE.Actor;
 	private readyCountdownLabel: MRE.Actor;
 	private gameSessionCountdownLabel: MRE.Actor;
@@ -57,6 +64,24 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			// 	this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;
 			// }
 		}
+		// const pulseAnimData = this.assets.createAnimationData(
+		// 	// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+		// 	// but it's merely descriptive in this sample.
+		// 	"Pulse",
+		// 	{
+		// 		// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+		// 		// and the values you want to change it to.
+		// 		tracks: [{
+		// 			// This animation targets the rotation of an actor named "text"
+		// 			target: MRE.ActorPath("target").transform.local.scale,
+		// 			keyframes: BounceScaleKeyframes,
+		// 			easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+		// 		}]
+		// 	});
+		// 	pulseAnimData.bind(
+		// 		{target: this.gameSessionCountdownLabel},
+		// 		{name: "Pulsing"}
+		// 	)
 	};
 
 	private startGaming = async () => {
@@ -68,7 +93,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		if (!pile) {
 			throw Error("Missing pile for " + this.gameSession.selectedDeckId);
 		}
-		this.appManager.getStore().dispatch(initializeGameSession({pile: shuffle(pile)}));
+		this.appManager.getStore().dispatch(initializeGameSession({ pile: shuffle(pile) }));
 		this.appManager.getStore().dispatch(drawCard({}));
 		// build card
 		this.buildCard();
@@ -81,13 +106,13 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.readyCountdownLabel.appearance.enabled = false;
 		this.cardTextLabel.appearance.enabled = true;
 		this.loadCardText();
-		this.root.startSound(this.firstCardSoundAsset?.id, {...soundOptions});
+		this.root.startSound(this.firstCardSoundAsset?.id, { ...soundOptions });
 		console.log("Game Session started");
 		// Play game
 		this.startGameSessionCountdown().then(this.handleGameEndEvent);
 	};
 	protected createRedMaterial = () =>
-		this.assets.createMaterial("red-mat-heads-up-card", {color: theme.color.background.playCardResult.pass});
+		this.assets.createMaterial("red-mat-heads-up-card", { color: theme.color.background.playCardResult.pass });
 
 	protected handleGameEndEvent = async () => {
 		// Display results
@@ -95,28 +120,28 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.cardTextLabel.text.height = CARD_TEXT_HEIGHT + 0.05;
 		this.cardTextLabel.text.contents = "Time Up!";
 		this.background.appearance.material = this.assets.createMaterial("mat-heads-up-card-time-up",
-			{color: theme.color.background.playCardResult.timeUp});
+			{ color: theme.color.background.playCardResult.timeUp });
 
-		this.root.startSound(this.endGameSessionEndSoundAsset?.id, {...soundOptions});
+		this.root.startSound(this.endGameSessionEndSoundAsset?.id, { ...soundOptions });
 		await delay(config.timeUpDuration);
 		this.appManager.getStore().dispatch(endGameSession());
 		console.log("Game Session over");
 	};
 
-	protected handleHeadUpDownEvent = (result: "top"|"bottom") => {
+	protected handleHeadUpDownEvent = (result: "top" | "bottom") => {
 		if (this.headsUpDownDetector.isDetecting()) {
 			const currentBg = this.background.appearance.material;
 			const currentText = this.cardTextLabel.text;
 			this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;// + 0.05;
 			if (result === "bottom") {
-				setTimeout(() => this.root.startSound(this.headDownSoundAsset.id, {...soundOptions}), 250);
+				setTimeout(() => this.root.startSound(this.headDownSoundAsset.id, { ...soundOptions }), 250);
 				// We need to flash the Correct card, change the bg to green
 				this.background.appearance.material =
 					this.assets.createMaterial("green-mat-heads-up-card",
-						{color: theme.color.background.playCardResult.correct});
+						{ color: theme.color.background.playCardResult.correct });
 				this.cardTextLabel.text.contents = "Correct!";
 			} else {
-				setTimeout(() => this.root.startSound(this.headUpSoundAsset.id, {...soundOptions}), 250);
+				setTimeout(() => this.root.startSound(this.headUpSoundAsset.id, { ...soundOptions }), 250);
 				// We need to flash the Pass card, change the bg to red
 				this.background.appearance.material = this.createRedMaterial();
 				this.cardTextLabel.text.contents = "Pass";
@@ -141,7 +166,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					parentId: base.id,
 					transform: {
 						local: {
-							position: {x: 0.0, y: 0.8, z: 0.0}
+							position: { x: 0.0, y: 0.8, z: 0.0 }
 						}
 					},
 					collider: {
@@ -162,7 +187,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.65, z: -0.05}
+					position: { x: 0, y: 0.65, z: -0.05 }
 				}
 			},
 			text: {
@@ -184,7 +209,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.75, z: -0.05}
+					position: { x: 0, y: 0.75, z: -0.05 }
 				}
 			},
 			text: {
@@ -206,7 +231,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0.45, z: -0.05}
+					position: { x: 0, y: 0.45, z: -0.05 }
 				}
 			},
 			text: {
@@ -222,7 +247,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 
 	buildCard = () => {
 		this.actorRef = [];
-		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
+		const mat = this.assets.createMaterial("mat", { color: theme.color.background.default });
 		const box = this.assets.createBoxMesh("box", 1.25, 0.8, 0.075);
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
@@ -236,7 +261,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					parentId: this.root.id,
 					transform: {
 						local: {
-							rotation: {y: 90}
+							rotation: { y: 90 }
 						}
 					},
 					rigidBody: {
@@ -264,27 +289,27 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			this.actorRef.push(base, this.root, this.background, this.readyCountdownLabel,
 				this.cardTextLabel, this.gameSessionCountdownLabel);
 			this.headDownSoundAsset = this.assets.createSound("head-down-sound",
-				{uri: `/sounds/head-down.wav`}
+				{ uri: `/sounds/head-down.wav` }
 			);
 			this.headUpSoundAsset = this.assets.createSound(
 				"head-up-sound",
-				{uri: `/sounds/head-up.wav`}
+				{ uri: `/sounds/head-up.wav` }
 			);
 			this.preCountdownSoundAsset = this.assets.createSound(
 				"pre-countdown-sound",
-				{uri: `/sounds/count-down.wav`}
+				{ uri: `/sounds/count-down.wav` }
 			);
 			this.endGameSessionEndSoundAsset = this.assets.createSound(
 				"end-game-session-sound",
-				{uri: `/sounds/game-session-ended.wav`}
+				{ uri: `/sounds/game-session-ended.wav` }
 			);
 			this.endingCountdownSoundAsset = this.assets.createSound(
 				"final-count-down-sound",
-				{uri: `/sounds/final-count-down.wav`}
+				{ uri: `/sounds/final-count-down.wav` }
 			);
 			this.firstCardSoundAsset = this.assets.createSound(
 				"first-card-sound",
-				{uri: `/sounds/display-text.wav`}
+				{ uri: `/sounds/display-text.wav` }
 			);
 		}
 	};
@@ -307,18 +332,43 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		clearInterval(this.readyCountdownTimer as any);
 	}
 
+	protected createpulseAnimData = () => {
+		return this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Pulse",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.scale,
+					keyframes: BounceScaleKeyframes,
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+				}]
+			});
+	}
+
 	protected startReadyCountdown = () => {
 		return new Promise(((resolve) => {
 			// eslint-disable-next-line @typescript-eslint/no-this-alias
 			const __this = this;
 			const start = new Date(Date.now() + this.gameSession.readyCountdownDuration);
+			const pulseAnimData = this.createpulseAnimData()
+
+			pulseAnimData.bind(
+				{ target: this.readyCountdownLabel },
+				{ name: "Pulsing" }
+			)
+
 			this.readyCountdownTimer =
 				countdown(
 					start,
-					function(ts) {
+					function (ts) {
 						__this.readyCountdownLabel.text.contents = `${ts.seconds}`;
 						if (ts.seconds > 0) {
-							__this.root.startSound(__this.preCountdownSoundAsset?.id, {...soundOptions});
+							__this.root.startSound(__this.preCountdownSoundAsset?.id, { ...soundOptions });
+							__this.readyCountdownLabel.targetingAnimationsByName.get("Pulsing").play();
 						}
 						if (ts.seconds < 1) {
 							resolve(null);
@@ -332,6 +382,11 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	};
 
 	protected startGameSessionCountdown = () => {
+		const pulseAnimData = this.createpulseAnimData()
+		pulseAnimData.bind(
+			{ target: this.gameSessionCountdownLabel },
+			{ name: "Pulsing" }
+		)
 		this.gameSessionCountdownLabel.appearance.enabled = true;
 		return new Promise(((resolve) => {
 			// eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -340,18 +395,23 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			this.gameSessionCountdownTimer =
 				countdown(
 					start,
-					function(ts) {
+					function (ts) {
 						const min = `${ts.minutes < 10 ? "0" : ""}${ts.minutes}`;
 						const sec = `${ts.seconds < 10 ? "0" : ""}${ts.seconds}`;
 						__this.gameSessionCountdownLabel.text.contents = `${min}:${sec}`;
 						if (ts.minutes < 1 && (ts.seconds < 10 && ts.seconds > 0)) {
-							__this.root.startSound(__this.endingCountdownSoundAsset?.id, {...soundOptions});
+							__this.root.startSound(__this.endingCountdownSoundAsset?.id, { ...soundOptions });
 						}
 						if (ts.seconds < 1 && ts.minutes < 1) {
 							resolve(null);
 							// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 							// @ts-ignore
 							clearInterval(__this.gameSessionCountdownTimer);
+						}
+						if (ts.seconds < 11 && ts.minutes < 1) {
+							__this.gameSessionCountdownLabel.text.color = MRE.Color3.Red()
+							__this.gameSessionCountdownLabel.transform
+							__this.gameSessionCountdownLabel.targetingAnimationsByName.get("Pulsing").play();
 						}
 					},
 					countdown.SECONDS | countdown.MINUTES);

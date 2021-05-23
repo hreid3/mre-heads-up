@@ -13,6 +13,7 @@ import { ApplicationManager, AppState, GAME_STATE, GameSession } from "./models/
 import { createStore } from "./store";
 import { playerDeckCanceled, setAppStarted } from "./store/app/actions";
 import { loadDecksFromFileSystem } from "./store/decks/thunks";
+import block from "./utils/block";
 
 /**
  * The main class of this Index. All the logic goes here.
@@ -49,7 +50,8 @@ export default class App implements ApplicationManager {
 	getStore = () => this.store;
 	getAssets = () => this.assets;
 
-	private handleUserJoined = (user: MRE.User) => {
+	private handleUserJoined = async (user: MRE.User) => {
+		await block(() => this.getStore().getState().app.appStarted)
 		this.deckSelection.attachBehaviors();
 	};
 
@@ -60,17 +62,18 @@ export default class App implements ApplicationManager {
 		}
 	};
 
-	private started = () => {
+	private started = async () => {
 		this.appRoot = MRE.Actor.Create(this.context, {actor: {name: "AppRoot"}});
-		this.store.dispatch(setAppStarted(true));
 		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 		// @ts-ignore
 		this.store.dispatch(loadDecksFromFileSystem());
+		await block(() => !!this.getStore().getState().decks.decks.length)
 		this.deckSelection = new DeckSelection(this);
 		this.gameSessionResults = new GameSessionResults(this);
 		// Listen for game start events
 		this.detectChanges();
 		console.log("App Started");
+		this.store.dispatch(setAppStarted(true));
 	};
 
 	private stopped = () => {
