@@ -2,7 +2,7 @@ name: Hey Mr. DJ
 enabled: True
 description: Not applicable
 type: text
-prefabUri: /decks/prefab/hey-mr-dj.glb
+prefabUri: /decks/prefab/hey-mr-dj-2.glb
 cards:
   - "(You Drive Me) Crazy' Britney Spears"
   - "Love Me Like You Do' Ellie Goulding"
