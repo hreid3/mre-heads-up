@@ -1,0 +1,155 @@
+name: Superstars
+enabled: False
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/superstars.glb
+cards:
+  - Michael Fassbender
+  - Jessie J
+  - Willow Smith
+  - The Situation
+  - Christopher Nolan
+  - Lana Del Rey
+  - Kate Hudson
+  - Liam Hemsworth
+  - Chris Rock
+  - Julia Stiles
+  - Psy
+  - Alyson Hannigan
+  - Jackie Chan
+  - Blake Lively
+  - Justin Bieber
+  - Jennifer Lawrence
+  - Emily Blunt
+  - Christina Aguilera
+  - Anne Hathaway
+  - Andy Samberg
+  - Kate McKinnon
+  - Kylie Jenner
+  - Bruno Mars
+  - Jason Momoa
+  - Jake Gyllenhaal
+  - Shaquille O'Neal
+  - Eddie Redmayne
+  - Stephen Curry
+  - Perez Hilton
+  - Kate Spade
+  - Madonna
+  - Chelsea Handle
+  - Sofia Vergara
+  - Rosario Dawson
+  - Brandy
+  - Brad Pitt
+  - John Boyega
+  - Jason Biggs
+  - Blue Ivy Carter
+  - Andrew Garfield
+  - Chris Evans
+  - Rachel McAdams
+  - LeAnn Rimes
+  - Dr. Dre
+  - Amanda Bynes
+  - James Marsden
+  - Keri Russell
+  - Enrique Iglesias
+  - Kate Moss
+  - Adam Driver
+  - Chad Michael Murray
+  - Josh Groban
+  - Robert Pattinson
+  - Brie Larson
+  - Keanu Reeves
+  - John Krasinski
+  - Robin Williams
+  - Bill Gates
+  - Zoe Saldana
+  - Fergie
+  - Mindy Kaling
+  - Sarah Palin
+  - Heath Ledger
+  - Nate Berkus
+  - Jimmy Fallon
+  - Shay Mitchell
+  - George Lopez
+  - Bryan Cranston
+  - Alicia Silverstone
+  - Angelina Jolie
+  - Amy Schumer
+  - Oscar Isaac
+  - Jason Derulo
+  - Candace Cameron
+  - James Earl Jones
+  - Denzel Washington
+  - Ben Affleck
+  - Ralph Lauren
+  - Norman Reedus
+  - Betty White
+  - Steve-O
+  - Jenny McCarthy
+  - Heather Locklear
+  - Melissa McCarthy
+  - Johnny Depp
+  - Giorgio Armani
+  - James McAvoy
+  - Aaron Paul
+  - Reba McEntire
+  - John Boyega
+  - Whitney Houston
+  - Halsey
+  - John Stamos
+  - Will Ferrell
+  - Jamie Foxx
+  - Tyler Perry
+  - Alex Trebek
+  - Seal
+  - Russell Brand
+  - Jason Bateman
+  - Christina Applegate
+  - Samuel L. Jackson
+  - Celine Dion
+  - Abigail Breslin
+  - John Travolta
+  - Kristin Chenoweth
+  - Meredith Vieira
+  - Nicole "Snooki" Polizzi
+  - Jeff Goldblum
+  - Elizabeth Banks
+  - Amy Winehouse
+  - Ann Curry
+  - Lorde
+  - Cate Blanchett
+  - Bryce Dallas Howard
+  - Issa Rae
+  - Jon Stewart
+  - Hailee Steinfeld
+  - Macy Gray
+  - Zendaya
+  - Chance the Rapper
+  - David Spade
+  - Christian Bale
+  - Demetrius
+  - Donald Glover
+  - Lil Wayne
+  - Idris Elba
+  - Mark Zuckerberg
+  - Catherine Zeta-Jones
+  - Jonah Hill
+  - Sarah Jessica Parker
+  - Nicole Kidman
+  - Kelly Osbourne
+  - Courteney Cox
+  - Snoop Lion
+  - Gabby Douglas
+  - Whoopi Goldberg
+  - Robin Wright
+  - James Corden
+  - Prince Harry
+  - Kevin Bacon
+  - Cara Delevingne
+  - Carrie Underwood
+  - Anna Kendrick
+  - Tina Fey
+  - Serena Williams
+  - Pitbull
+  - Kevin Federline
+  - Scarlett Johansson

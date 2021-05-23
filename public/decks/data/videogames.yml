@@ -1,0 +1,225 @@
+name: Video Game Land
+enabled: True
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/videogames.glb
+cards:
+  - Street Fighter
+  - Grand Theft Auto
+  - Super Mario
+  - Sonic the Hedgehog
+  - Overwatch
+  - Minecraft
+  - Pac-Man
+  - Donkey Kong
+  - Pong
+  - Space Invaders
+  - Tetris
+  - Zelda
+  - Final Fantasy
+  - Doom
+  - The Last of Us
+  - Metroid
+  - Asteroids
+  - Centipede
+  - Bioshock
+  - Fallout
+  - Pokemon
+  - Metal Gear Solid
+  - Q*bert
+  - Pitfall
+  - Resident Evil
+  - Duck Hunt
+  - Counter Strike
+  - Yoshi's Island
+  - Halo
+  - Call of Duty
+  - Smite
+  - League of Legends
+  - Dota 2
+  - Fortnite
+  - The Witcher
+  - Mass Effect
+  - Player Unknown Battlegrounds
+  - Portal
+  - Uncharted
+  - Roblox
+  - Dark Souls
+  - Bloodborne
+  - NBA Jam
+  - Star Fox
+  - Starbound
+  - Tomb Raider
+  - PaRappa the Rapper
+  - Diablo
+  - Tekken
+  - Dance Dance Revolution
+  - SoulCalibur
+  - Silent Hill
+  - The Sims
+  - Kingdom Hearts
+  - Dragon Quest
+  - World of Warcraft
+  - God of War
+  - Guitar Hero
+  - Tom Clancy's Splinter Cell
+  - Gears of War
+  - Rockband
+  - Team Fortress 2
+  - Dead Space
+  - LittleBigPlanet
+  - Left 4 Dead 2
+  - Persona 5
+  - Assassin's Creed
+  - Bayonetta
+  - Red Dead Redemption
+  - StarCraft
+  - Dishonored
+  - Destiny
+  - Animal Crossing
+  - Borderlands
+  - Rayman
+  - Banjo & Kazooie
+  - Among Us
+  - Warframe
+  - Apex Legends
+  - Cyberpunk
+  - Fall Guys
+  - Ghost of Tsushima
+  - Valorant
+  - Rocket League
+  - Tom Clancy's Rainbow Six Siege
+  - Horizon Zero Dawn
+  - NBA 2k
+  - FIFA
+  - Madden
+  - The Division
+  - Outriders
+  - Genshin Impact
+  - Rust
+  - Escape From Tarkov
+  - Scavengers
+  - "Humans : Fall Flat"
+  - Plants Vs. Zombies
+  - Totally Accurate Battle Simulator
+  - Cuphead
+  - Splatoon
+  - Run
+  - Clash of Clans
+  - Clash Royale
+  - Sea of Thieves
+  - Five Nights At Freddy's
+  - "Detroit : Become Human"
+  - TitanFall
+  - Terraria
+  - Stardew Valley
+  - Dead by Daylight
+  - Battlefield
+  - Luigi's Mansion
+  - Fire Emblem
+  - Xenoblade Chronicles
+  - Fatal Fury
+  - Little Nightmares
+  - Hitman
+  - Monster Hunter
+  - Hearthstone
+  - Watch Dogs
+  - Days Gone
+  - osu!
+  - Far Cry
+  - Devil May Cry
+  - Rogue Company
+  - Hades
+  - NieR
+  - Mafia
+  - Geometry Dash
+  - 8 Ball Pool
+  - N+
+  - Solitaire
+  - Doom Eternal
+  - Forza Motorsport
+  - Forza Horizon
+  - Ark Survival Evolved
+  - Garry's Mod
+  - Sekiro Shadows Die Twice
+  - World War Z
+  - Control
+  - Yakuza
+  - Marvel's Spider Man
+  - Injustice
+  - The Surge
+  - Anthem
+  - Wasteland
+  - Ori
+  - Celeste
+  - Subnautica
+  - Raid Shadow Legends
+  - Star Trek
+  - Star Wars Battlefront
+  - No Man's Sky
+  - Don't Starve
+  - The Forest
+  - Dying Light
+  - Infamous
+  - Saints Row
+  - Sleeping Dogs
+  - Mad Max
+  - State of Decay
+  - Vampyr
+  - Rage
+  - Dragon Age
+  - Crackdown
+  - Outer Wilds
+  - Trove
+  - Superhot
+  - Metro Exodus
+  - Death Standing
+  - Marvel's Avengers
+  - Wolfenstein
+  - Astral Chain
+  - Hyrule Warriors
+  - Frostpunk
+  - XCOM
+  - Paladins
+  - Darwin Project
+  - Brawlhalla
+  - Realm Royale
+  - Squad
+  - HyperScape
+  - For Honor
+  - Sniper Elite
+  - Prey
+  - Lawbreakers
+  - Zombie Army
+  - Tony Hawk Pro Skater
+  - Crash Bandicoot
+  - Shadow of Colossus
+  - Dragon Ball Z
+  - Naruto Ultimate Ninja Storm
+  - Neighbor
+  - Dragon Ball Fighters Z
+  - The Evil Within
+  - Jump Force
+  - Life is Strange
+  - Marvel vs. Capcom
+  - Dead or Alive
+  - MLB The Show
+  - Fable
+  - Scott Pligram vs. The World
+  - Hollow Knight
+  - Overcooked
+  - Pikmin
+  - Shovel Knight
+  - Marvel's Ultimate Alliance
+  - Attack on Titan
+  - Dead Island
+  - Ninja Gaiden
+  - Killer Instinct
+  - Darkstalkers
+  - BlazBlue
+  - Divinity
+  - Burnout
+  - Undertale
+  - Inside
+  - Half-life
+  - Castlevania

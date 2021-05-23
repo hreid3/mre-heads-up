@@ -22,6 +22,7 @@ export interface Deck {
 	cards: Card[];
 	prefabUri: string;
 	enabled: boolean;
+	flipped?: boolean;
 }
 
 export interface Card {
