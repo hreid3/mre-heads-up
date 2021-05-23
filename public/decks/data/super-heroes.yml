@@ -2,7 +2,7 @@ name: Super Heroes
 enabled: True
 description: Not applicable
 type: text
-prefabUri: /decks/prefab/super-heroes.glb
+prefabUri: /decks/prefab/super-heroes-2.glb
 cards:
   - Super man
   - Supergirl

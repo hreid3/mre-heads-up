@@ -2,7 +2,7 @@ name: Football
 enabled: True
 description: Not applicable
 type: text
-prefabUri: /decks/prefab/football.glb
+prefabUri: /decks/prefab/football-2.glb
 cards:
   - Jim Brown
   - Lawrence Taylor
