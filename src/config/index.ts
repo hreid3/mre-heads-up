@@ -1,7 +1,7 @@
 
 export default {
 	playStartDelay: 1000,
-	duration: 10000,
+	duration: 20000,
 	readyCountdownDuration: 3000,
 	timeUpDuration: 2500,
 	resultsItemDelay: 1000,
