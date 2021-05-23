@@ -1,0 +1,228 @@
+name: Animals Gone Wild
+enabled: True
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/animals-gone-wild.glb
+cards:
+  - T-Rex
+  - Mole
+  - Orangutan
+  - Great White Shark
+  - Koala
+  - Moose
+  - Turkey
+  - Racoon
+  - Gorilla
+  - Elephant
+  - Locust
+  - Bull
+  - Worm
+  - Coyote
+  - Cougar
+  - Crane
+  - Tiger
+  - Parakeet
+  - Snake
+  - Boa
+  - Rhinoceros
+  - Gecko
+  - Fox
+  - Giraffe
+  - Cobra
+  - Pony
+  - Firefly
+  - Sabre Tooth Tiger
+  - Viper
+  - Dolphin
+  - Unicorn
+  - Wooly Mammoth
+  - Moth
+  - Sheep
+  - Gnat
+  - Quail
+  - Dingo
+  - Monkey
+  - Donkey
+  - Pig
+  - Swan
+  - Spider
+  - Bobcat
+  - Owl
+  - Cockroach
+  - Humpback Whale
+  - Killer Whale
+  - Seal
+  - Kitten
+  - Wolf
+  - Ox
+  - Badger
+  - Bat
+  - Chicken
+  - Seahorse
+  - Alligator
+  - Sardine
+  - Cricket
+  - Flying Squirrel
+  - Guinea Pig
+  - Panda
+  - Fish
+  - Peacock
+  - Camel
+  - Gazelle
+  - Guppy
+  - Kangaroo
+  - Reindeer
+  - Bee
+  - Barracuda
+  - Wasp
+  - Horseshoe Crab
+  - Weasel
+  - Dog
+  - Sloth
+  - Wolverine
+  - Hyena
+  - Black Bear
+  - Chipmunk
+  - Mosquito
+  - Emu
+  - Calf
+  - Chick
+  - Duck
+  - Scorpion
+  - Cat
+  - Squirrel
+  - Anaconda
+  - Gerbil
+  - Crawfish
+  - Coral
+  - Goose
+  - Lion
+  - Lamb
+  - Toucan
+  - Alpaca
+  - Cub
+  - Hummingbird
+  - Suga Glider
+  - Leopard
+  - Tasmanian Devil
+  - Bison
+  - Iguana
+  - Dragon
+  - Shunk
+  - Praying Mantis
+  - Black Widow
+  - Tick
+  - Hamster
+  - Eel
+  - Frog
+  - Rattlesnake
+  - Tadpole
+  - Turtle
+  - Ladybug
+  - Inchworm
+  - Grasshopper
+  - Lobster
+  - Beaver
+  - Ant
+  - Elk
+  - Mule
+  - Poodle
+  - Termite
+  - Flea
+  - Manatee
+  - Baboon
+  - Leech
+  - Oyster
+  - Snail
+  - Swordfish
+  - Stingray
+  - Earwig
+  - Partridge
+  - Buffalo
+  - Hornet
+  - Cuckoo
+  - Platypus
+  - Barnacle
+  - Rabbit
+  - Goat
+  - Jaguar
+  - Slug
+  - Zebra
+  - Tortoise
+  - Polar Bear
+  - Lemur
+  - Lizard
+  - Flying Squirrel
+  - Bunny
+  - Horse
+  - Vulture
+  - Walrus
+  - Bedbug
+  - Opossum
+  - Blue Whale
+  - Woodpecker
+  - Toad
+  - Hammerhead Shark
+  - Crocodile
+  - Salmon
+  - Cow
+  - Sea Lion
+  - Komodo Dragon
+  - Sea Urchin
+  - Penguin
+  - Hermit Crab
+  - Warthog
+  - Gopher
+  - Ape
+  - Squid
+  - Rat
+  - Stork
+  - Otter
+  - Anteater
+  - Meerkat
+  - Great Dane
+  - Daddy Longlegs
+  - Boar
+  - Clam
+  - Parrot
+  - Bullfrog
+  - Shrimp
+  - Cheetah
+  - Seagull
+  - Seagull
+  - Goldfish
+  - Wallaby
+  - Panther
+  - Chimpanzee
+  - Crab
+  - Porcupine
+  - Aardvark
+  - Jellyfish
+  - Hawk
+  - Mouse
+  - Grey Whale
+  - Ferret
+  - Ostrich
+  - Salamander
+  - Octopus
+  - Pegasus
+  - Pelican
+  - Pigeon
+  - Falcon
+  - Eagle
+  - Newt
+  - Crow
+  - Hedgehog
+  - Centipede
+  - Stink Bug
+  - Rooster
+  - Human
+  - Caterpillar
+  - Dove
+  - Deer
+  - Dragonfly
+  - Butterfly
+  - Tiger
+  - Swan
+  - Antelope
+  - Cougar
