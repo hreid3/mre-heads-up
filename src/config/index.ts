@@ -4,7 +4,7 @@ export default {
 	duration: 60000,
 	readyCountdownDuration: 3000,
 	timeUpDuration: 2500,
-	resultsItemDelay: 3000,
+	resultsItemDelay: 4000,
 	headsUpDetectorDebounce: 1000,
 	soundOptions: {
 		volume: 0.2,
