@@ -78,11 +78,20 @@ export class DeckSelection {
 		const gm = this.gameSession;
 		if (prev.selectedDeckId !== gm.selectedDeckId) {
 			this.setOnlyDeckSelected(!!gm.selectedDeckId, gm.selectedDeckId);
+			if (prev.state === GAME_STATE.Playing
+				&& this.gameSession.state === GAME_STATE.Waiting
+				&& this.appManager.getStore().getState().app.displayResults) {
+				const playButton = this.playerButtonMapping[prev.selectedDeckId];
+				const label = getButtonLabel(playButton);
+				const { default: defaultColor } = theme.color.button;
+				label.text.contents = "Play";
+				label.text.color = defaultColor.text;
+				playButton.appearance.material.color = MRE.Color4.FromColor3(defaultColor.background);
+			}
 		}
 	}
 
 	private setup = () => {
-		console.log("Decks change detected");
 		this.assetContainer = new MRE.AssetContainer(this.appManager.getContext());
 
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
@@ -170,31 +179,6 @@ export class DeckSelection {
 				anchor: MRE.TextAnchorLocation.BottomCenter,
 				justify: MRE.TextJustify.Center,
 				color: theme.color.font.header
-			}
-		}
-	});
-
-	// eslint-disable-next-line max-len
-	private getDeckDesc = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
-		actor: {
-			parentId: base.id,
-			appearance: {
-				meshId: box.id,
-				materialId: mat.id,
-				enabled: true
-			},
-			transform: {
-				local: {
-					position: { z: -0.05 }
-				}
-			},
-			text: {
-				pixelsPerLine: 12,
-				contents: `${wordwrap(deck.description, { width: 40 })}`,
-				height: 0.035,
-				anchor: MRE.TextAnchorLocation.MiddleCenter,
-				justify: MRE.TextJustify.Left,
-				color: theme.color.font.paragraph
 			}
 		}
 	});

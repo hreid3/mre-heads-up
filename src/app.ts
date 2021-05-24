@@ -74,7 +74,7 @@ export default class App implements ApplicationManager {
 		this.store.dispatch(loadDecksFromFileSystem());
 		await block(() => !!this.getStore().getState().decks.decks.length)
 		this.deckSelection = new DeckSelection(this, this.backgroundPrefab);
-		this.gameSessionResults = new GameSessionResults(this);
+		this.gameSessionResults = new GameSessionResults(this, this.backgroundPrefab);
 		// Listen for game start events
 		this.detectChanges();
 		console.log("App Started");
