@@ -12,22 +12,35 @@ const playButtonName = "playButton";
 const playButtonLabel = "label";
 const DECK_CARD_PREFIX = "deckCard_";
 
-const GrowScaleKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
-	{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
-	{ time: 0.25, value: { x: 1.5, y: 1.5, z: 1.5 } }
-];
-const ShrinkScaleKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
-	{ time: 0, value: { x: 1.5, y: 1.5, z: 1.5 }, easing: MRE.AnimationEaseCurves.Step },
-	{ time: 0.25, value: { x: 1, y: 1, z: 1 } }
-];
-const popKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
-	{ time: 0, value: {x: 0 ,y: 0 ,z: 0 } },
-	{ time: 0.25, value: { x: 0, y: 0, z: -0.2 } }
-]
-const unPopKeyframes: Array<MRE.Keyframe<MRE.Vector3>> = [
-	{ time: 0, value: {x: 0 ,y: 0 ,z: 0 } },
-	{ time: 0.25, value: { x: 0, y: 0, z: 0.2 } }
-]
+const GrowScaleKeyframes = (scaleFactor: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
+		{ time: 0.25, value: { x: scaleFactor, y: scaleFactor, z: 1 } }
+	];
+	return item
+}
+const ShrinkScaleKeyframes = (scaleFactor: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: scaleFactor, y: scaleFactor, z: 1 }, easing: MRE.AnimationEaseCurves.Step },
+		{ time: 0.25, value: { x: 1, y: 1, z: 1 } }
+	];
+	return item
+}
+const popKeyframes = (distance: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: 0, y: 0, z: 0 } },
+		{ time: 0.25, value: { x: 0, y: 0, z: distance } }
+	];
+	return item
+}
+const unPopKeyframes = (distance: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: 0, y: 0, z: 0 } },
+		{ time: 0.25, value: { x: 0, y: 0, z: distance } }
+	];
+	return item
+}
+
 const FlipKeyframes: Array<MRE.Keyframe<MRE.Quaternion>> = [
 	{ time: 0, value: MRE.Quaternion.FromEulerAngles(0, 0, 0) },
 	{ time: 0.25, value: MRE.Quaternion.FromEulerAngles(0, Math.PI, 0) },
@@ -112,7 +125,7 @@ export class DeckSelection {
 				tracks: [{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: GrowScaleKeyframes,
+					keyframes: GrowScaleKeyframes(1.5),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
 				}, {
 					target: MRE.ActorPath("target").transform.local.rotation,
@@ -123,11 +136,11 @@ export class DeckSelection {
 				{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: popKeyframes,
+					keyframes: popKeyframes(-0.2),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
 					relative: true
 				}
-			]
+				]
 			});
 	}
 	protected createShrinkAnimData = () => {
@@ -141,7 +154,7 @@ export class DeckSelection {
 				tracks: [{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: ShrinkScaleKeyframes,
+					keyframes: ShrinkScaleKeyframes(1.5),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
 				}, {
 					target: MRE.ActorPath("target").transform.local.rotation,
@@ -152,11 +165,11 @@ export class DeckSelection {
 				{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: unPopKeyframes,
+					keyframes: unPopKeyframes(0.2),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
 					relative: true
 				}
-			]
+				]
 			});
 	}
 
