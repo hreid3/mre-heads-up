@@ -12,6 +12,33 @@ const playButtonName = "playButton";
 const playButtonLabel = "label";
 const DECK_CARD_PREFIX = "deckCard_";
 
+const GrowScaleKeyframes = (scaleFactor: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
+		{ time: 0.25, value: { x: scaleFactor, y: scaleFactor, z: 1 } }
+	];
+	return item
+}
+const ShrinkScaleKeyframes = (scaleFactor: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: scaleFactor, y: scaleFactor, z: 1 }, easing: MRE.AnimationEaseCurves.Step },
+		{ time: 0.25, value: { x: 1, y: 1, z: 1 } }
+	];
+	return item
+}
+const popKeyframes = (distance: number) => {
+	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
+		{ time: 0, value: { x: 0, y: 0, z: 0 } },
+		{ time: 0.25, value: { x: 0, y: 0, z: distance } }
+	];
+	return item
+}
+
+const FlipKeyframes: Array<MRE.Keyframe<MRE.Quaternion>> = [
+	{ time: 0, value: MRE.Quaternion.FromEulerAngles(0, 0, 0) },
+	{ time: 0.25, value: MRE.Quaternion.FromEulerAngles(0, Math.PI, 0) },
+];
+
 const getButtonLabel =
 	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
 
@@ -91,6 +118,65 @@ export class DeckSelection {
 		}
 	}
 
+	protected createGrowAnimData = (scale: number, distance: number) => {
+		return this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Growing",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.scale,
+					keyframes: GrowScaleKeyframes(scale),
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+				}, {
+					target: MRE.ActorPath("target").transform.local.rotation,
+					keyframes: FlipKeyframes,
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
+					relative: true
+				},
+				{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.position,
+					keyframes: popKeyframes(distance),
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
+					relative: true
+				}
+				]
+			});
+	}
+	protected createShrinkAnimData = (scale: number, distance: number) => {
+		return this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Shrinking",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.scale,
+					keyframes: ShrinkScaleKeyframes(scale),
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+				}, {
+					target: MRE.ActorPath("target").transform.local.rotation,
+					keyframes: FlipKeyframes,
+					easing: MRE.AnimationEaseCurves.Linear,
+					relative: true
+				},
+				{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("target").transform.local.position,
+					keyframes: popKeyframes(distance),
+					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
+					relative: true
+				}
+				]
+			});
+	}
+
 	private setup = () => {
 		this.assetContainer = new MRE.AssetContainer(this.appManager.getContext());
 
@@ -105,8 +191,19 @@ export class DeckSelection {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {
 					const deckCard = this.createDeck(deck);
+					const GrowAnimData = this.createGrowAnimData(1.5, -0.2)
+					const ShrinkAnimData = this.createShrinkAnimData(1.5, 0.2)
+
 					this.deckCards.push(deckCard);
 					this.actorDeckMapping[deck.id] = deckCard;
+					GrowAnimData.bind(
+						{ target: deckCard },
+						{ name: "Growing" }
+					);
+					ShrinkAnimData.bind(
+						{ target: deckCard },
+						{ name: "Shrinking" }
+					);
 				}
 			}
 			this.layoutCards(this.deckCards);
@@ -285,28 +382,28 @@ export class DeckSelection {
 		});
 		deckCardBehavior.onClick(user => {
 			if (this.gameSession.state === GAME_STATE.Waiting) {
-				const scaleFactor = 1.5;
 				const lastFlippedCard = this.decksState.decks.find(value => value.flipped);
 				const lastFlippedCardId = lastFlippedCard?.id;
+
+
 				if (lastFlippedCardId) { // Flip the existing card
 					this.appManager.getStore().dispatch(setFlipDeck({ id: lastFlippedCardId, flipped: false }));
 					const otherCardBase = this.deckCards
 						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
 					// TODO: Kevin to Animate
-					otherCardBase.transform.local.rotation.y = 0;
-					otherCardBase.transform.local.position.z = 0;
-					otherCardBase.transform.local.position.z = 0;
-					otherCardBase.transform.local.scale.x = otherCardBase.transform.local.scale.x / scaleFactor;
-					otherCardBase.transform.local.scale.y = otherCardBase.transform.local.scale.y / scaleFactor;
-					otherCardBase.transform.local.scale.z = otherCardBase.transform.local.scale.z / scaleFactor;
+
+					otherCardBase.targetingAnimationsByName.get("Growing").stop();
+					otherCardBase.targetingAnimationsByName.get("Shrinking").play();
+					// otherCardBase.transform.local.scale.x = otherCardBase.transform.local.scale.x / scaleFactor;
+					// otherCardBase.transform.local.scale.y = otherCardBase.transform.local.scale.y / scaleFactor;
+					// otherCardBase.transform.local.scale.z = otherCardBase.transform.local.scale.z / scaleFactor;
 				}
 				if (lastFlippedCardId !== deck.id) {
 					// TODO: Kevin to Animate
-					deckBase.transform.local.rotation.y = 90;
-					deckBase.transform.local.position.z = -0.2;
-					deckBase.transform.local.scale.x = deckBase.transform.local.scale.x * scaleFactor;
-					deckBase.transform.local.scale.y = deckBase.transform.local.scale.y * scaleFactor;
-					deckBase.transform.local.scale.z = deckBase.transform.local.scale.z * scaleFactor;
+					deckBase.targetingAnimationsByName.get("Shrinking").stop();
+					deckBase.targetingAnimationsByName.get("Growing").play();
+					// deckBase.targetingAnimationsByName.get("Growing").stop();
+					// deckBase.targetingAnimationsByName.get("Shrinking").play();
 
 					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
 				}
