@@ -33,13 +33,6 @@ const popKeyframes = (distance: number) => {
 	];
 	return item
 }
-const unPopKeyframes = (distance: number) => {
-	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
-		{ time: 0, value: { x: 0, y: 0, z: 0 } },
-		{ time: 0.25, value: { x: 0, y: 0, z: distance } }
-	];
-	return item
-}
 
 const FlipKeyframes: Array<MRE.Keyframe<MRE.Quaternion>> = [
 	{ time: 0, value: MRE.Quaternion.FromEulerAngles(0, 0, 0) },
@@ -114,7 +107,7 @@ export class DeckSelection {
 		}
 	}
 
-	protected createGrowAnimData = () => {
+	protected createGrowAnimData = (scale: number, distance: number) => {
 		return this.assets.createAnimationData(
 			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
 			// but it's merely descriptive in this sample.
@@ -125,7 +118,7 @@ export class DeckSelection {
 				tracks: [{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: GrowScaleKeyframes(1.5),
+					keyframes: GrowScaleKeyframes(scale),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
 				}, {
 					target: MRE.ActorPath("target").transform.local.rotation,
@@ -136,14 +129,14 @@ export class DeckSelection {
 				{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: popKeyframes(-0.2),
+					keyframes: popKeyframes(distance),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
 					relative: true
 				}
 				]
 			});
 	}
-	protected createShrinkAnimData = () => {
+	protected createShrinkAnimData = (scale: number, distance: number) => {
 		return this.assets.createAnimationData(
 			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
 			// but it's merely descriptive in this sample.
@@ -154,7 +147,7 @@ export class DeckSelection {
 				tracks: [{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: ShrinkScaleKeyframes(1.5),
+					keyframes: ShrinkScaleKeyframes(scale),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
 				}, {
 					target: MRE.ActorPath("target").transform.local.rotation,
@@ -165,7 +158,7 @@ export class DeckSelection {
 				{
 					// This animation targets the rotation of an actor named "text"
 					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: unPopKeyframes(0.2),
+					keyframes: popKeyframes(distance),
 					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
 					relative: true
 				}
@@ -188,8 +181,8 @@ export class DeckSelection {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {
 					const deckCard = this.createDeck(deck);
-					const GrowAnimData = this.createGrowAnimData()
-					const ShrinkAnimData = this.createShrinkAnimData()
+					const GrowAnimData = this.createGrowAnimData(1.5, -0.2)
+					const ShrinkAnimData = this.createShrinkAnimData(1.5, 0.2)
 
 					this.deckCards.push(deckCard);
 					this.actorDeckMapping[deck.id] = deckCard;
