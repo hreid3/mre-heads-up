@@ -1,0 +1,214 @@
+name: Football
+enabled: True
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/football-2.glb
+cards:
+  - Jim Brown
+  - Lawrence Taylor
+  - Jerry Rice
+  - Tom Brady
+  - Walter Payton
+  - Joe Montana
+  - Reggie White
+  - Peyton Manning
+  - Johnny Unitas
+  - Barry Sanders
+  - Joe Greene
+  - Dick Butkus
+  - Ronnie Lott
+  - Huddle
+  - Quarterback
+  - Deion Sanders
+  - Kicker
+  - John Elway
+  - Emmitt Smith
+  - Dan Marino
+  - Gale Sayers
+  - Mascot
+  - Ray Lewis
+  - Randy Moss
+  - The big game
+  - Brett Favre
+  - Alan Page
+  - Bruce Smith
+  - Jack Lambert
+  - John Hannah
+  - Offside
+  - Body Paint
+  - Dick 'Night Train' Lane
+  - Drew Brees
+  - Gino Marchetti
+  - Tom Gonzalez
+  - Ron Woodson
+  - Eric Dickson
+  - Mel Blount
+  - O.J. Simpson
+  - Aaron Rodgers
+  - Ray Nitschke
+  - Forrest Gregg
+  - Chuck Bednarik
+  - Jim Thorpe
+  - Mike Singletary
+  - Red Grange
+  - Roger Staubach
+  - Jim Parker
+  - Bronko Nagurski
+  - John Mackey
+  - Terrell Owens
+  - Merlin Olsen
+  - LaDainian Tomlinson
+  - Gene Upshaw
+  - Steve Young
+  - Marshall Faulk
+  - Raymond Berry
+  - Backs
+  - Gunner
+  - Losers
+  - Dallas Cowboys
+  - Tip
+  - Winners
+  - Challenge
+  - Rose Bowl
+  - Heisman
+  - Backfield
+  - Hard Knocks
+  - Downfield
+  - Remember the Titans
+  - Interception
+  - Turnovers
+  - Fumble
+  - Crowd
+  - Halftime
+  - Turf
+  - Sack
+  - Chip Kelly
+  - Positions
+  - Blind Slide
+  - Stadium
+  - Potluck
+  - Personal Foul
+  - Football
+  - Defensive Tackle
+  - Yard
+  - The Blind Side
+  - Pass
+  - Loss of Down
+  - Blitz
+  - Jammer
+  - Block
+  - Shoulder Pads
+  - The Weekend
+  - Take a Knee
+  - Playoffs
+  - Guard
+  - Linebackers
+  - Pro bowl
+  - Gloves
+  - Safetly
+  - Illegal Contact
+  - Replay
+  - The Dab
+  - Button Hook
+  - Neutral Zone
+  - Lateral
+  - Fair Catch
+  - Running Back
+  - Troy Aikman
+  - Draft
+  - Friday Night Lights
+  - Zone
+  - Weak Side
+  - Orange Bowl
+  - Onside Kick
+  - Cheerleaders
+  - Slant
+  - Handoff
+  - Sugar Bowl
+  - Quarter
+  - First Down
+  - Formation
+  - Fiesta Bowl
+  - Fantasy Football
+  - Prevent Defense
+  - Goa Pot
+  - Big 12
+  - Receivers
+  - Big Ten
+  - Eye Black
+  - Regular Season
+  - Excessive Celebration
+  - Marching Band
+  - Return
+  - Gatorade Bath
+  - Offensive Tackle
+  - Pac-12
+  - Beer
+  - Screen Pass
+  - Fourth Down
+  - Encroachment
+  - Monday Night Football
+  - Substitution
+  - Tailgating
+  - Halftime Show
+  - Shotgun
+  - Spiral
+  - Wide Receiver
+  - Red Shirt
+  - Drive
+  - Second Down
+  - Defensive End
+  - College
+  - Form Finger Punt
+  - Offensive Guard
+  - Lineup
+  - International Series
+  - Scrimmage
+  - Touchback
+  - Pocket
+  - Referee
+  - Offense
+  - Fans
+  - Punter
+  - Mouthguard
+  - Ineligible Receiver
+  - Wildcat
+  - The Waterboy
+  - Possession
+  - Forward Pass
+  - Deflategate
+  - Cheering
+  - Red Zone
+  - Hail Mary
+  - Field Goal
+  - Pom-Poms
+  - Any Given Sunday
+  - Extra Point
+  - End Zone
+  - Helmet
+  - Audible
+  - Series
+  - Tight End
+  - Cleats
+  - Wigs
+  - Time out
+  - Block in the Back
+  - Flea Flicker
+  - Upfield
+  - Tripping
+  - Secondary
+  - Snap
+  - EA
+  - Whistle
+  - End Zone Dance
+  - Touchdown
+  - Flag
+  - Interference
+  - Roughing the Passer
+  - Sack
+  - Facemask
+  - Uniform
+  - Strong Side
+  - Rushing
+  - Super Bowl
+  - Down

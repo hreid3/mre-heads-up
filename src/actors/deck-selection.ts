@@ -50,11 +50,12 @@ export class DeckSelection {
 	private actorDeckMapping: Record<string, Actor> = {};
 	private playerButtonMapping: Record<string, Actor> = {};
 	private gameSession: GameSession;
-	private deckCards: Actor[] = [];
+	private deckCards: MRE.Actor[] = [];
+	private backDrop: MRE.Actor;
 	private playButtonSoundAsset: MRE.Asset;
 	private assetContainer: MRE.AssetContainer;
 
-	constructor(private appManager: ApplicationManager) {
+	constructor(private appManager: ApplicationManager, private prefab: MRE.Prefab) {
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 		this.setup();
 		this.detectChanges();
@@ -104,6 +105,16 @@ export class DeckSelection {
 		const gm = this.gameSession;
 		if (prev.selectedDeckId !== gm.selectedDeckId) {
 			this.setOnlyDeckSelected(!!gm.selectedDeckId, gm.selectedDeckId);
+			if (prev.state === GAME_STATE.Playing
+				&& this.gameSession.state === GAME_STATE.Waiting
+				&& this.appManager.getStore().getState().app.displayResults) {
+				const playButton = this.playerButtonMapping[prev.selectedDeckId];
+				const label = getButtonLabel(playButton);
+				const { default: defaultColor } = theme.color.button;
+				label.text.contents = "Play";
+				label.text.color = defaultColor.text;
+				playButton.appearance.material.color = MRE.Color4.FromColor3(defaultColor.background);
+			}
 		}
 	}
 
@@ -167,7 +178,6 @@ export class DeckSelection {
 	}
 
 	private setup = () => {
-		console.log("Decks change detected");
 		this.assetContainer = new MRE.AssetContainer(this.appManager.getContext());
 
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
@@ -206,18 +216,45 @@ export class DeckSelection {
 
 	private layoutCards = (deckCards: Actor[]) => {
 		let i = 0;
+		const MAX_COL = 5;
+		let row = 0;
 		this.gridLayout = new MRE.PlanarGridLayout(this.root);
 		for (const deckCard of deckCards) {
+			if (i % MAX_COL === 0) {
+				row++;
+			}
 			this.gridLayout.addCell({
-				row: 0,
-				height: 1,
-				column: i++,
-				width: 0.55,
+				row: row,
+				height: 0.80,
+				column: i % MAX_COL,
+				width: 0.56,
 				contents: deckCard
 			});
+			i++;
 		}
 		this.gridLayout.applyLayout();
+		this.backDrop = MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
+			{
+				prefab: this.prefab,
+				actor: {
+					parentId: this.root.id,
+					transform: {
+						local: {
+							scale: { x: 1.0, y: (0.31 * row) - 0.02, z: 0.5 }
+						}
+					},
+					collider: {
+						geometry: {
+							shape: MRE.ColliderType.Auto
+						},
+						isTrigger: true
+					}
+				}
+			}
+		);
+		this.backDrop.collider.onTrigger("trigger-enter", noop);
 	};
+
 	// eslint-disable-next-line max-len
 	private getDeckTitle = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
@@ -239,31 +276,6 @@ export class DeckSelection {
 				anchor: MRE.TextAnchorLocation.BottomCenter,
 				justify: MRE.TextJustify.Center,
 				color: theme.color.font.header
-			}
-		}
-	});
-
-	// eslint-disable-next-line max-len
-	private getDeckDesc = (deck: Deck, base: MRE.Actor, box: MRE.Mesh, mat: MRE.Material) => MRE.Actor.Create(this.appManager.getContext(), {
-		actor: {
-			parentId: base.id,
-			appearance: {
-				meshId: box.id,
-				materialId: mat.id,
-				enabled: true
-			},
-			transform: {
-				local: {
-					position: { z: -0.05 }
-				}
-			},
-			text: {
-				pixelsPerLine: 12,
-				contents: `${wordwrap(deck.description, { width: 40 })}`,
-				height: 0.035,
-				anchor: MRE.TextAnchorLocation.MiddleCenter,
-				justify: MRE.TextJustify.Left,
-				color: theme.color.font.paragraph
 			}
 		}
 	});
@@ -467,18 +479,18 @@ export class DeckSelection {
 	private createDeck = (deck: Deck) => {
 		const base = MRE.Actor.Create(
 			this.appManager.getContext(), {
-			actor: {
-				name: `${DECK_CARD_PREFIX}${deck.name}`,
-				parentId: this.root.id,
-				transform: { local: { rotation: { y: deck.flipped ? 9 : 0 } } },
-				collider: {
-					geometry: {
-						shape: MRE.ColliderType.Auto
-					},
-					isTrigger: true
+				actor: {
+					name: `${DECK_CARD_PREFIX}${deck.name}`,
+					parentId: this.root.id,
+					transform: { local: { rotation: { y: deck.flipped ? 9 : 0 } } },
+					collider: {
+						geometry: {
+							shape: MRE.ColliderType.Auto
+						},
+						isTrigger: true
+					}
 				}
-			}
-		});
+			});
 		this.getDeckPrefab(deck, base);
 		this.getPlayButton(base, deck);
 		return base;

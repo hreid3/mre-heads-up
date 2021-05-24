@@ -9,7 +9,7 @@ import delay from "../utils/delay";
 
 const MAX_ITEM_SIZE = 9;
 const cardCellItemOptions = {
-	height: 0.12,
+	height: 0.25,
 	column: 0,
 	width: 1.6
 };
@@ -26,7 +26,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 	private correctSoundAsset: MRE.Asset;
 	private passSoundAsset: MRE.Asset;
 
-	constructor(appManager: ApplicationManager) {
+	constructor(appManager: ApplicationManager, private prefab: MRE.Prefab) {
 		super(appManager);
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 	}
@@ -37,7 +37,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 		this.generator = 0;
 		this.itemCache = [];
 		this.actors = [];
-		const mat = this.assets.createMaterial("mat", {color: theme.color.background.default});
+		const mat = this.assets.createMaterial("mat", { color: theme.color.background.default });
 		const box = this.assets.createBoxMesh("box", 1.6, 1.25, 0.075);
 		this.setupSounds();
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
@@ -54,7 +54,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 			const layout = new MRE.PlanarGridLayout(base, BoxAlignment.MiddleCenter);
 			layout.addCell({
 				row: 0,
-				height: 0.15,
+				height: 0.30,
 				column: 0,
 				width: 1.6,
 				contents: this.title,
@@ -74,9 +74,9 @@ export class GameSessionResults extends AbstractChangeDetection {
 			await delay(1000);
 			const item = this.createResultItem(base, card);
 			if (card.correct) {
-				this.root.startSound(this.correctSoundAsset?.id, {...config.soundOptions});
+				this.root.startSound(this.correctSoundAsset?.id, { ...config.soundOptions });
 			} else {
-				this.root.startSound(this.passSoundAsset?.id, {...config.soundOptions});
+				this.root.startSound(this.passSoundAsset?.id, { ...config.soundOptions });
 			}
 			row++;
 			textLayout.addCell({
@@ -107,11 +107,11 @@ export class GameSessionResults extends AbstractChangeDetection {
 	private setupSounds = () => {
 		this.correctSoundAsset = this.assets.createSound(
 			"correct-sound",
-			{uri: `/sounds/display-text.wav`}
+			{ uri: `/sounds/display-text.wav` }
 		);
 		this.passSoundAsset = this.assets.createSound(
 			"passed-sound",
-			{uri: `/sounds/negative-result.wav`}
+			{ uri: `/sounds/negative-result.wav` }
 		);
 	};
 
@@ -124,7 +124,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 				}
 				// eslint-disable-next-line max-len
 				const item = this.createResultItem(base, {
-					card: {value: ``, id: `idgen_${this.generator++}`, type: "text"},
+					card: { value: ``, id: `idgen_${this.generator++}`, type: "text" },
 					correct: false
 				});
 				layout.addCell({
@@ -139,31 +139,29 @@ export class GameSessionResults extends AbstractChangeDetection {
 		layout.applyLayout();
 	};
 	// eslint-disable-next-line max-len
-	private getResultsBackground = (base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) => MRE.Actor.Create(this.appManager.getContext(),
-		{
-			actor: {
-				parentId: base.id,
-				appearance: {
-					meshId: box.id,
-					materialId: mat.id,
-					enabled: true
-				},
-				transform: {
-					local: {
-						rotation: {x: -0.258819, y: 0, z: 0},
-						position: {x: 0, z: -0.5, y: 1.2}
+	private getResultsBackground =
+		(base: MRE.Actor, mat: MRE.Material, box: MRE.Mesh) =>
+			MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
+				{
+					prefab: this.prefab,
+					actor: {
+						parentId: this.root.id,
+						transform: {
+							local: {
+								rotation: { x: -0.258819, y: 0, z: 0 },
+								position: { x: 0, z: -0.5, y: 1.6 },
+								scale: { y: 0.4, x: 0.5 }
+							}
+						},
+						collider: {
+							geometry: {
+								shape: MRE.ColliderType.Auto
+							},
+							isTrigger: true
+						}
 					}
-				},
-				collider: {
-					geometry: {
-						shape: MRE.ColliderType.Auto
-					},
-					isTrigger: true
 				}
-			}
-		}
-	);
-
+			);
 	protected getTitleText = () => `YOU GOT ${this.internalCount} CARD${this.internalCount !== 1 ? "S" : ""}`;
 	protected createTitle = (base: MRE.Actor) => MRE.Actor.Create(this.appManager.getContext(), {
 		actor: {
@@ -174,13 +172,13 @@ export class GameSessionResults extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0, z: -0.05}
+					position: { x: 0, y: 0, z: -0.05 }
 				}
 			},
 			text: {
-				pixelsPerLine: 12,
+				pixelsPerLine: 24,
 				contents: this.getTitleText(),
-				height: 0.075,
+				height: 0.22,
 				anchor: MRE.TextAnchorLocation.MiddleCenter,
 				justify: MRE.TextJustify.Center,
 				color: theme.color.font.header
@@ -201,13 +199,13 @@ export class GameSessionResults extends AbstractChangeDetection {
 			},
 			transform: {
 				local: {
-					position: {x: 0, y: 0, z: -0.05}
+					position: { x: 0, y: 0, z: -0.05 }
 				}
 			},
 			text: {
 				pixelsPerLine: 12,
-				contents: wordwrap(`${card.value}`, {width: 140}),
-				height: 0.065,
+				contents: wordwrap(`${card.value}`, { width: 140 }),
+				height: 0.18,
 				anchor: MRE.TextAnchorLocation.MiddleCenter,
 				justify: MRE.TextJustify.Center,
 				color: correct ? theme.color.font.paragraph : theme.color.font.disabled
@@ -216,7 +214,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 	});
 
 	protected createBase = (parent: MRE.Actor) => {
-		const box = this.assets.createBoxMesh("box", 1.6, 1, 0.075);
+		const box = this.assets.createBoxMesh("box", 1.6, 2, 0.075);
 		const mat = this.assets.createMaterial("transparent", {
 			color: MRE.Color4.FromColor3(MRE.Color3.White(), 0),
 			alphaMode: AlphaMode.Blend
@@ -225,7 +223,7 @@ export class GameSessionResults extends AbstractChangeDetection {
 			{
 				actor: {
 					parentId: parent.id,
-					appearance: {meshId: box.id, materialId: mat.id},
+					appearance: { meshId: box.id, materialId: mat.id },
 					transform: {
 						local: {}
 					}

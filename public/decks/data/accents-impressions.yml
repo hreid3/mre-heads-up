@@ -1,5 +1,5 @@
 name: Accents & Impressions
-enabled: False
+enabled: True
 description: Not applicable
 type: text
 prefabUri: /decks/prefab/accents-impressions.glb

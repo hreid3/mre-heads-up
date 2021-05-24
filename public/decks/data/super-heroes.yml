@@ -1,0 +1,184 @@
+name: Super Heroes
+enabled: True
+description: Not applicable
+type: text
+prefabUri: /decks/prefab/super-heroes-2.glb
+cards:
+  - Super man
+  - Supergirl
+  - Batman
+  - Batwomen
+  - Wonderwomen
+  - Joker
+  - Batman & Robin
+  - Black Panter
+  - Green lantern
+  - Captain America
+  - Spider-man
+  - Thor
+  - Iron Man
+  - Captain Marvel
+  - Incredible Hulk
+  - Black Widow
+  - Daredevil
+  - Wolverine
+  - Deadpool
+  - Henry Pym
+  - Aquaman
+  - Doctor Strange
+  - Green Arrow
+  - Barry Allen
+  - Storm
+  - Catwoman
+  - Robin
+  - Ant-Man
+  - Asterix
+  - The Atom
+  - The Avengers
+  - Batgirl
+  - Black Canary
+  - Conan the Barbarian
+  - The Defenders
+  - Doc Savage
+  - Elektra
+  - Fantastic Four
+  - Ghost Rider
+  - Guardians of the Galaxy
+  - Hawkeye
+  - Hellboy
+  - Iron Fist
+  - Marvelman
+  - Robin
+  - The Rocketeer
+  - The Shadow
+  - Sub-Mariner
+  - Teenage Mutant Ninja Turtles
+  - Thor
+  - The Wasp
+  - Watchmen
+  - X-Men
+  - Zatanna
+  - Zatara
+  - DeadPool
+  - Jessica Jones
+  - Luke Cage
+  - Thing
+  - Mr Fantastic
+  - Invisible Woman
+  - Human Torch
+  - Dick Grayson
+  - Flash
+  - Silver Surfer
+  - Martian Manhunter
+  - Plastic Man
+  - Hulk
+  - Damian Wayne
+  - Cyborg
+  - Beast Boy
+  - Starfire
+  - Donna Troy
+  - Hercules
+  - Black cCanary
+  - Black Lightning
+  - Professor X
+  - Captain Atom
+  - Vision
+  - Wasp
+  - Phantom Stranger
+  - Mr Miracle
+  - Zauriel
+  - Iron Fist
+  - Hawkgirl
+  - Geo-Force
+  - Mr Terrific
+  - Stargirl
+  - Swamp Thing
+  - Venom
+  - Scarlet Witch
+  - She-Hulk
+  - Falcon
+  - Winter Soldier
+  - Blade
+  - Punisher
+  - Superhero teams
+  - Avengers
+  - Supervillians
+  - Doctor Doom
+  - Magneto
+  - Thanos
+  - Loki
+  - Green Goblin
+  - Kingpin
+  - Red Skull
+  - Ultron
+  - Mandarin
+  - MODOK
+  - Doctor Octopus
+  - Kang
+  - Dormammu
+  - galactus
+  - Professor Charles
+  - Dark Phoenix
+  - Beast
+  - Spider-Woman
+  - Spectrum
+  - X-23
+  - She-Hulk
+  - Jane Foster/Thor
+  - Crystal
+  - America Chavez
+  - Rogue
+  - Nemesis
+  - Quicksilver
+  - Scarlet Witch/Wanda
+  - Groot
+  - Cyclops
+  - Cyborg
+  - Iceman
+  - Colossus
+  - Angel
+  - Nightcrawler
+  - Kitty Pryde
+  - Emma Frost
+  - Namor
+  - Gambit
+  - Nick Fury
+  - Cannonball
+  - Mary Jane
+  - Sabretooth
+  - Cable
+  - J. Jonah Jameson
+  - Magik
+  - Mystique
+  - Jubilee
+  - Bishop
+  - Aunt May
+  - Carnage
+  - Wolfsbane
+  - Norman Osborn
+  - Banshee
+  - Juggernaut
+  - Sinestro
+  - Jason Todd
+  - Barbara Gordon
+  - John Stewart
+  - Power Girl
+  - Deathstroke
+  - Lois Lane
+  - Booster Gold
+  - Elongated Man
+  - Maxwell Lord
+  - Kon-El
+  - Krypto
+  - Two-Face
+  - Jimmy Olsen
+  - Scarecrow
+  - Carol Ferris
+  - Sue Dibny
+  - Ra's al Ghul
+  - Blue Beetle ( Reyes)
+  - Black Beetle
+  - Black Adam
+  - Larfleeze
+  - Phantom Girl
+  - Harley Quinn
