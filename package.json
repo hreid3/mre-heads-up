@@ -1,6 +1,6 @@
 {
   "name": "mre-heads-up",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "The popular game heads-up in VR.",
   "main": "built/server.js",
   "repository": {
