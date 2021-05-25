@@ -1,5 +1,5 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
-import { Actor } from "@microsoft/mixed-reality-extension-sdk";
+import { Actor, MreArgumentError } from "@microsoft/mixed-reality-extension-sdk";
 import wordwrap from "word-wrap";
 import config from "../config";
 import { ApplicationManager, Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/application";
@@ -11,33 +11,6 @@ import noop from "../utils/noop";
 const playButtonName = "playButton";
 const playButtonLabel = "label";
 const DECK_CARD_PREFIX = "deckCard_";
-
-const GrowScaleKeyframes = (scaleFactor: number) => {
-	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
-		{ time: 0, value: { x: 1, y: 1, z: 1 }, easing: MRE.AnimationEaseCurves.EaseInQuadratic },
-		{ time: 0.25, value: { x: scaleFactor, y: scaleFactor, z: 1 } }
-	];
-	return item
-}
-const ShrinkScaleKeyframes = (scaleFactor: number) => {
-	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
-		{ time: 0, value: { x: scaleFactor, y: scaleFactor, z: 1 }, easing: MRE.AnimationEaseCurves.Step },
-		{ time: 0.25, value: { x: 1, y: 1, z: 1 } }
-	];
-	return item
-}
-const popKeyframes = (distance: number) => {
-	const item: Array<MRE.Keyframe<MRE.Vector3>> = [
-		{ time: 0, value: { x: 0, y: 0, z: 0 } },
-		{ time: 0.25, value: { x: 0, y: 0, z: distance } }
-	];
-	return item
-}
-
-const FlipKeyframes: Array<MRE.Keyframe<MRE.Quaternion>> = [
-	{ time: 0, value: MRE.Quaternion.FromEulerAngles(0, 0, 0) },
-	{ time: 0.25, value: MRE.Quaternion.FromEulerAngles(0, Math.PI, 0) },
-];
 
 const getButtonLabel =
 	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
@@ -107,65 +80,6 @@ export class DeckSelection {
 		}
 	}
 
-	protected createGrowAnimData = (scale: number, distance: number) => {
-		return this.assets.createAnimationData(
-			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
-			// but it's merely descriptive in this sample.
-			"Growing",
-			{
-				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
-				// and the values you want to change it to.
-				tracks: [{
-					// This animation targets the rotation of an actor named "text"
-					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: GrowScaleKeyframes(scale),
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-				}, {
-					target: MRE.ActorPath("target").transform.local.rotation,
-					keyframes: FlipKeyframes,
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
-					relative: true
-				},
-				{
-					// This animation targets the rotation of an actor named "text"
-					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: popKeyframes(distance),
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
-					relative: true
-				}
-				]
-			});
-	}
-	protected createShrinkAnimData = (scale: number, distance: number) => {
-		return this.assets.createAnimationData(
-			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
-			// but it's merely descriptive in this sample.
-			"Shrinking",
-			{
-				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
-				// and the values you want to change it to.
-				tracks: [{
-					// This animation targets the rotation of an actor named "text"
-					target: MRE.ActorPath("target").transform.local.scale,
-					keyframes: ShrinkScaleKeyframes(scale),
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-				}, {
-					target: MRE.ActorPath("target").transform.local.rotation,
-					keyframes: FlipKeyframes,
-					easing: MRE.AnimationEaseCurves.Linear,
-					relative: true
-				},
-				{
-					// This animation targets the rotation of an actor named "text"
-					target: MRE.ActorPath("target").transform.local.position,
-					keyframes: popKeyframes(distance),
-					easing: MRE.AnimationEaseCurves.EaseOutQuadratic,
-					relative: true
-				}
-				]
-			});
-	}
-
 	private setup = () => {
 		console.log("Decks change detected");
 		this.assetContainer = new MRE.AssetContainer(this.appManager.getContext());
@@ -181,19 +95,9 @@ export class DeckSelection {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {
 					const deckCard = this.createDeck(deck);
-					const GrowAnimData = this.createGrowAnimData(1.5, -0.2)
-					const ShrinkAnimData = this.createShrinkAnimData(1.5, 0.2)
 
 					this.deckCards.push(deckCard);
-					this.actorDeckMapping[deck.id] = deckCard;
-					GrowAnimData.bind(
-						{ target: deckCard },
-						{ name: "Growing" }
-					);
-					ShrinkAnimData.bind(
-						{ target: deckCard },
-						{ name: "Shrinking" }
-					);
+					this.actorDeckMapping[deck.id] = deckCard;	
 				}
 			}
 			this.layoutCards(this.deckCards);
@@ -380,18 +284,41 @@ export class DeckSelection {
 						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
 					// TODO: Kevin to Animate
 
-					otherCardBase.targetingAnimationsByName.get("Growing").stop();
-					otherCardBase.targetingAnimationsByName.get("Shrinking").play();
-					// otherCardBase.transform.local.scale.x = otherCardBase.transform.local.scale.x / scaleFactor;
-					// otherCardBase.transform.local.scale.y = otherCardBase.transform.local.scale.y / scaleFactor;
-					// otherCardBase.transform.local.scale.z = otherCardBase.transform.local.scale.z / scaleFactor;
+					const scaleFactor = 1
+					const axis = new MRE.Vector3(0,1,0)
+					
+					const {x,y,z} = otherCardBase.transform.local.position 
+					
+					const position = new MRE.Vector3(x,y,z)
+					const rotation = MRE.Quaternion.RotationAxis(axis, 0);
+					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor)
+					
+					
+					MRE.Animation.AnimateTo(this.appManager.getContext(), otherCardBase,{
+						destination: { transform: { local: { position, rotation, scale } } },
+						duration: 0.25,
+						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+					})
 				}
 				if (lastFlippedCardId !== deck.id) {
 					// TODO: Kevin to Animate
-					deckBase.targetingAnimationsByName.get("Shrinking").stop();
-					deckBase.targetingAnimationsByName.get("Growing").play();
-					// deckBase.targetingAnimationsByName.get("Growing").stop();
-					// deckBase.targetingAnimationsByName.get("Shrinking").play();
+					
+					const scaleFactor = 1.5
+					const axis = new MRE.Vector3(0,1,0)
+					
+					const {x,y,z} =  deckBase.transform.local.position
+
+					const position = new MRE.Vector3(x,y,z-0.2)
+					const rotation = MRE.Quaternion.RotationAxis(axis, Math.PI);
+					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor)
+
+
+					MRE.Animation.AnimateTo(this.appManager.getContext(), deckBase,{
+						destination: { transform: { local: { position, rotation, scale } } },
+						duration: 0.25,
+						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
+					})
+
 
 					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
 				}
