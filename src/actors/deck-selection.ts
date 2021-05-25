@@ -306,7 +306,7 @@ export class DeckSelection {
 					const scaleFactor = 1.5
 					const axis = new MRE.Vector3(0,1,0)
 					
-					const {x,y,z} =  deckBase.transform.local.position
+					const {x,y,z} = deckBase.transform.local.position
 
 					const position = new MRE.Vector3(x,y,z-0.2)
 					const rotation = MRE.Quaternion.RotationAxis(axis, Math.PI);
