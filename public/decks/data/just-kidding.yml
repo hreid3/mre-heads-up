@@ -1,5 +1,5 @@
 name: Just Kidding
-enabled: False
+enabled: True
 description: Not applicable
 type: text
 prefabUri: /decks/prefab/just-kidding.glb
