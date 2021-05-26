@@ -105,7 +105,7 @@ export class DeckSelection {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {
 					const deckCard = this.createDeck(deck);
-
+					
 					this.deckCards.push(deckCard);
 					this.actorDeckMapping[deck.id] = deckCard;	
 				}
@@ -298,8 +298,7 @@ export class DeckSelection {
 
 					const scaleFactor = 1
 					const axis = new MRE.Vector3(0,1,0)
-					
-					const {x,y,z} = otherCardBase.transform.local.position 
+					const {x,y,z} = this.actorDeckMapping[lastFlippedCardId].transform.local.position 
 					
 					const position = new MRE.Vector3(x,y,z)
 					const rotation = MRE.Quaternion.RotationAxis(axis, 0);
@@ -318,7 +317,7 @@ export class DeckSelection {
 					const scaleFactor = 1.5
 					const axis = new MRE.Vector3(0,1,0)
 					
-					const {x,y,z} = deckBase.transform.local.position
+					const {x,y,z} = this.actorDeckMapping[deck.id].transform.local.position 
 
 					const position = new MRE.Vector3(x,y,z-0.2)
 					const rotation = MRE.Quaternion.RotationAxis(axis, Math.PI);
@@ -331,7 +330,7 @@ export class DeckSelection {
 						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
 					})
 
-
+					
 					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
 				}
 			}
