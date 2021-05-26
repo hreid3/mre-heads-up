@@ -12,8 +12,6 @@ const playButtonName = "playButton";
 const playButtonLabel = "label";
 const DECK_CARD_PREFIX = "deckCard_";
 
-const defaultDeckPosition = {} 
-
 const getButtonLabel =
 	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
 
