@@ -12,7 +12,12 @@ const logger = createLogger({
 export const createStore = (): Store<AppState> => {
 	const store = configureStore({
 		reducer: {app, decks},
-		// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
+		middleware: (getDefaultMiddleware) => {
+			if (process.env.LOG_STORE) {
+				return getDefaultMiddleware().concat(logger);
+			}
+			return getDefaultMiddleware();
+		}
 	});
 	return store;
 };

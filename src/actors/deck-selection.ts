@@ -1,5 +1,5 @@
 import * as MRE from "@microsoft/mixed-reality-extension-sdk";
-import { Actor, MreArgumentError } from "@microsoft/mixed-reality-extension-sdk";
+import { Actor } from "@microsoft/mixed-reality-extension-sdk";
 import wordwrap from "word-wrap";
 import config from "../config";
 import { ApplicationManager, Deck, DecksState, GAME_STATE, GameSession, ID } from "../models/application";
@@ -27,9 +27,17 @@ export class DeckSelection {
 	private backDrop: MRE.Actor;
 	private playButtonSoundAsset: MRE.Asset;
 	private assetContainer: MRE.AssetContainer;
+	private playButtonMaterial: MRE.Asset;
+	private playButtonBox: MRE.Asset;
 
-	constructor(private appManager: ApplicationManager, private prefab: MRE.Prefab) {
+	constructor(
+		private appManager: ApplicationManager,
+		private prefab: MRE.Prefab,
+		private deckCardPrefabs: Record<string, MRE.Prefab>) {
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
+		this.playButtonMaterial = this.assets.createMaterial("mat", { color: theme.color.button.default.background });
+		this.playButtonBox = this.assets.createBoxMesh("box", 0.22, 0.075, 0.0005);
+
 		this.setup();
 		this.detectChanges();
 	}
@@ -105,9 +113,9 @@ export class DeckSelection {
 			for (const deck of this.decksState.decks) {
 				if (deck.enabled) {
 					const deckCard = this.createDeck(deck);
-					
+
 					this.deckCards.push(deckCard);
-					this.actorDeckMapping[deck.id] = deckCard;	
+					this.actorDeckMapping[deck.id] = deckCard;
 				}
 			}
 			this.layoutCards(this.deckCards);
@@ -184,45 +192,36 @@ export class DeckSelection {
 		}
 	});
 
-	private getDeckPrefab = async (deck: Deck, base: MRE.Actor) => {
-		const loader = await this.assetContainer.loadGltf(deck.prefabUri, "box");
-		const prefab = loader.find(a => a.prefab !== null)?.prefab;
-		if (!prefab) {
-			throw Error(`No prefeb defined for ${deck.name}`);
-		}
-		return MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
-			{
-				prefab,
-				actor: {
-					name: `${DECK_CARD_PREFIX}prefab_${deck.id}`,
-					parentId: base.id,
-					transform: {
-						local: {
-							position: { x: 0.0, y: 0.0, z: 0.0 }
-						}
-					},
-					collider: {
-						geometry: {
-							shape: MRE.ColliderType.Auto
-						},
-						isTrigger: true
+	private getDeckPrefab = (deck: Deck, base: MRE.Actor) => MRE.Actor.CreateFromPrefab(this.appManager.getContext(),
+		{
+			prefab: this.deckCardPrefabs[deck.id],
+			actor: {
+				name: `${DECK_CARD_PREFIX}prefab_${deck.id}`,
+				parentId: base.id,
+				transform: {
+					local: {
+						position: { x: 0.0, y: 0.0, z: 0.0 }
 					}
+				},
+				collider: {
+					geometry: {
+						shape: MRE.ColliderType.Auto
+					},
+					isTrigger: true
 				}
 			}
-		);
-	};
+		}
+	);
 
 	private getPlayButton = (base: MRE.Actor, deck: Deck) => {
-		const mat = this.assets.createMaterial("mat", { color: theme.color.button.default.background });
-		const box = this.assets.createBoxMesh("box", 0.22, 0.075, 0.0005);
 		const playButton = MRE.Actor.Create(this.appManager.getContext(),
 			{
 				actor: {
 					parentId: base.id,
 					name: playButtonName,
 					appearance: {
-						meshId: box.id,
-						materialId: mat.id,
+						meshId: this.playButtonBox.id,
+						materialId: this.playButtonMaterial.id,
 						enabled: true
 					},
 					transform: {
@@ -294,43 +293,41 @@ export class DeckSelection {
 					this.appManager.getStore().dispatch(setFlipDeck({ id: lastFlippedCardId, flipped: false }));
 					const otherCardBase = this.deckCards
 						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
-					// TODO: Kevin to Animate
 
-					const scaleFactor = 1
-					const axis = new MRE.Vector3(0,1,0)
-					const {x,y,z} = this.actorDeckMapping[lastFlippedCardId].transform.local.position 
-					
-					const position = new MRE.Vector3(x,y,z)
+					const scaleFactor = 1;
+					const axis = new MRE.Vector3(0, 1, 0);
+					const { x, y, z } = this.actorDeckMapping[lastFlippedCardId].transform.local.position;
+
+					const position = new MRE.Vector3(x, y, z);
 					const rotation = MRE.Quaternion.RotationAxis(axis, 0);
-					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor)
-					
-					
-					MRE.Animation.AnimateTo(this.appManager.getContext(), otherCardBase,{
+					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor);
+
+
+					MRE.Animation.AnimateTo(this.appManager.getContext(), otherCardBase, {
 						destination: { transform: { local: { position, rotation, scale } } },
 						duration: 0.25,
 						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-					})
+					});
 				}
 				if (lastFlippedCardId !== deck.id) {
-					// TODO: Kevin to Animate
-					
-					const scaleFactor = 1.5
-					const axis = new MRE.Vector3(0,1,0)
-					
-					const {x,y,z} = this.actorDeckMapping[deck.id].transform.local.position 
 
-					const position = new MRE.Vector3(x,y,z-0.2)
+					const scaleFactor = 1.5;
+					const axis = new MRE.Vector3(0, 1, 0);
+
+					const { x, y, z } = this.actorDeckMapping[deck.id].transform.local.position;
+
+					const position = new MRE.Vector3(x, y, z - 0.2);
 					const rotation = MRE.Quaternion.RotationAxis(axis, Math.PI);
-					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor)
+					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor);
 
 
-					MRE.Animation.AnimateTo(this.appManager.getContext(), deckBase,{
+					MRE.Animation.AnimateTo(this.appManager.getContext(), deckBase, {
 						destination: { transform: { local: { position, rotation, scale } } },
 						duration: 0.25,
 						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-					})
+					});
 
-					
+
 					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
 				}
 			}
