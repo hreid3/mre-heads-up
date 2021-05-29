@@ -23,13 +23,12 @@ function runApp() {
 	// Start listening for connections, and serve static files.
 	const server = new MRE.WebHost({
 		baseDir: resolvePath(__dirname, '../public'),
-		// baseUrl: 'http://108.72.45.167:3902',
-		baseUrl: process.env.BASE_URL,
-		port: process.env.MRE_PORT,
 	});
 
 	// Handle new application sessions
-	server.adapter.onConnection((context, params) => new App(context, params));
+	server.adapter.onConnection((context, params) => {
+		return new App(context, params, process.env.DAM_BASE_URI || '')
+	});
 }
 
 // Check whether code is running in a debuggable watched filesystem

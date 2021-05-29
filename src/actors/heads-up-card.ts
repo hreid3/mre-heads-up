@@ -38,11 +38,13 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	private preCountdownSoundAsset: MRE.Asset;
 	private endGameSessionEndSoundAsset: MRE.Asset;
 	private endingCountdownSoundAsset: MRE.Asset;
+	private gameEndingMaterial: MRE.Material;
 
 	constructor(
 		appManager: ApplicationManager,
 		private player: MRE.User,
-		private headsUpCardPrefab: MRE.Prefab
+		private headsUpCardPrefab: MRE.Prefab,
+		private soundAssets: Record<string, MRE.Sound>,
 	) {
 		super(appManager);
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
@@ -96,13 +98,16 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.appManager.getStore().dispatch(initializeGameSession({ pile: shuffle(pile) }));
 		this.appManager.getStore().dispatch(drawCard({}));
 		// build card
-		this.buildCard();
+		await this.buildCard();
+		this.gameEndingMaterial = this.assets.createMaterial("mat-heads-up-card-time-up",
+			{ color: theme.color.background.playCardResult.timeUp })
+		await this.gameEndingMaterial.created;
 
 		// Start pre-countdown
 		await this.startReadyCountdown();
 		this.headsUpDownDetector = new HeadsUpCollisionDetector(
 			this.appManager.getContext(), this.appManager.getAppRoot(), this.player);
-		this.headsUpDownDetector.startCollectionDetection(this.handleHeadUpDownEvent);
+		await this.headsUpDownDetector.startCollectionDetection(this.handleHeadUpDownEvent);
 		this.readyCountdownLabel.appearance.enabled = false;
 		this.cardTextLabel.appearance.enabled = true;
 		this.loadCardText();
@@ -119,8 +124,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		this.headsUpDownDetector.stopCollectionDetection();
 		this.cardTextLabel.text.height = CARD_TEXT_HEIGHT + 0.05;
 		this.cardTextLabel.text.contents = "Time Up!";
-		this.background.appearance.material = this.assets.createMaterial("mat-heads-up-card-time-up",
-			{ color: theme.color.background.playCardResult.timeUp });
+		this.background.appearance.material = this.gameEndingMaterial;
 
 		this.root.startSound(this.endGameSessionEndSoundAsset?.id, { ...soundOptions });
 		await delay(config.timeUpDuration);
@@ -130,20 +134,20 @@ export class HeadsUpCard extends AbstractChangeDetection {
 
 	protected handleHeadUpDownEvent = (result: "top" | "bottom") => {
 		if (this.headsUpDownDetector.isDetecting()) {
-			const currentBg = this.background.appearance.material;
+			// const currentBg = this.background.appearance.material;
 			const currentText = this.cardTextLabel.text;
 			this.cardTextLabel.text.height = CARD_TEXT_HEIGHT;// + 0.05;
 			if (result === "bottom") {
 				setTimeout(() => this.root.startSound(this.headDownSoundAsset.id, { ...soundOptions }), 250);
 				// We need to flash the Correct card, change the bg to green
-				this.background.appearance.material =
-					this.assets.createMaterial("green-mat-heads-up-card",
-						{ color: theme.color.background.playCardResult.correct });
+				// this.background.appearance.material =
+				// this.assets.createMaterial("green-mat-heads-up-card",
+				// 	{ color: theme.color.background.playCardResult.correct });
 				this.cardTextLabel.text.contents = "Correct!";
 			} else {
 				setTimeout(() => this.root.startSound(this.headUpSoundAsset.id, { ...soundOptions }), 250);
 				// We need to flash the Pass card, change the bg to red
-				this.background.appearance.material = this.createRedMaterial();
+				// this.background.appearance.material = this.createRedMaterial();
 				this.cardTextLabel.text.contents = "Pass";
 			}
 			setTimeout(() => { // TODO:  Lets kill these timeouts instead of writing condition
@@ -152,7 +156,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					this.cardTextLabel.text.height = currentText.height;
 					this.appManager.getStore().dispatch(recordUserSelection(result === "bottom"));
 					this.appManager.getStore().dispatch(drawCard({}));
-					this.background.appearance.material = currentBg;
+					// this.background.appearance.material = currentBg;
 				}
 			}, 1000);
 		}
@@ -245,10 +249,11 @@ export class HeadsUpCard extends AbstractChangeDetection {
 		}
 	});
 
-	buildCard = () => {
+	buildCard = async () => {
 		this.actorRef = [];
 		const mat = this.assets.createMaterial("mat", { color: theme.color.background.default });
 		const box = this.assets.createBoxMesh("box", .75, 0.5, 0.075);
+		await Promise.all([mat, box]);
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: "HeadsUpCardRoot",
@@ -277,6 +282,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 					}
 				}
 			});
+		await base.created();
 		if (this.player) {
 			base.collider.onTrigger("trigger-enter", () => {
 				console.log("wtf");
@@ -285,32 +291,20 @@ export class HeadsUpCard extends AbstractChangeDetection {
 			this.background = this.getBackground(base, mat, box);
 			this.readyCountdownLabel = this.buildReadyCountdownLabel(base);
 			this.cardTextLabel = this.buildCardTextLabel(base);
+			await Promise.all([
+				this.background.created(),
+				this.cardTextLabel.created(),
+				this.readyCountdownLabel.created(),
+			])
 			this.gameSessionCountdownLabel = this.buildGameSessionCountdownLabel(base);
 			this.actorRef.push(base, this.root, this.background, this.readyCountdownLabel,
 				this.cardTextLabel, this.gameSessionCountdownLabel);
-			this.headDownSoundAsset = this.assets.createSound("head-down-sound",
-				{ uri: `/sounds/head-down.wav` }
-			);
-			this.headUpSoundAsset = this.assets.createSound(
-				"head-up-sound",
-				{ uri: `/sounds/head-up.wav` }
-			);
-			this.preCountdownSoundAsset = this.assets.createSound(
-				"pre-countdown-sound",
-				{ uri: `/sounds/count-down.wav` }
-			);
-			this.endGameSessionEndSoundAsset = this.assets.createSound(
-				"end-game-session-sound",
-				{ uri: `/sounds/game-session-ended.wav` }
-			);
-			this.endingCountdownSoundAsset = this.assets.createSound(
-				"final-count-down-sound",
-				{ uri: `/sounds/final-count-down.wav` }
-			);
-			this.firstCardSoundAsset = this.assets.createSound(
-				"first-card-sound",
-				{ uri: `/sounds/display-text.wav` }
-			);
+			this.headDownSoundAsset = this.soundAssets["head-down-sound"];
+			this.headUpSoundAsset = this.soundAssets["head-up-sound"];
+			this.preCountdownSoundAsset = this.soundAssets["pre-countdown-sound"];
+			this.endGameSessionEndSoundAsset = this.soundAssets["end-game-session-sound"];
+			this.endingCountdownSoundAsset = this.soundAssets["final-count-down-sound"];
+			this.firstCardSoundAsset = this.soundAssets["first-card-sound"];
 		}
 	};
 

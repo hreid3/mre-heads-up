@@ -3,7 +3,7 @@ import { AlphaMode } from "@microsoft/mixed-reality-extension-sdk";
 import debounce from "lodash.debounce";
 import config from "../config";
 
-const showCubes = false;
+const showCubes = true;
 export class HeadsUpCollisionDetector {
 	private assets: MRE.AssetContainer;
 	private topDetector: MRE.Actor;
@@ -16,7 +16,7 @@ export class HeadsUpCollisionDetector {
 		this.assets = new MRE.AssetContainer(this.context);
 	}
 
-	public startCollectionDetection = (callbackFn: (arg0: 'top'|'bottom') => void) => {
+	public startCollectionDetection = async (callbackFn: (arg0: 'top'|'bottom') => void) => {
 		const callback = debounce(callbackFn, config.headsUpDetectorDebounce, {
 			leading: true, trailing: false
 		});
@@ -27,25 +27,29 @@ export class HeadsUpCollisionDetector {
 			const mat = this.assets.createMaterial('translucent',
 				{ alphaMode: AlphaMode.Blend, color: MRE.Color4.FromColor3(MRE.Color3.White(), 0.1)});
 			const headBoxMesh = this.assets.createBoxMesh('box', 0.5, 0.5, 0.5);
-			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
-
+			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 1.5, 0.5);
+			await Promise.all([mat.created, headBoxMesh.created, detectorMesh.created]);
 			this.frontDetector =
 				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 2.25}, mat);
+			await this.frontDetector.created();
 			this.frontDetector.attach(this.player.id, 'center-eye');
 
-			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.25 , z: 2}, mat);
+			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.75	 , z: 2}, mat);
+			await this.topDetector.created();
 			this.topDetector.attach(this.player.id, 'neck');
 			this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
 				if (otherActor.name === FRONT_DETECTOR) { callback('top'); }
 				console.log("Top collision")
 			});
 
-			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 2}, mat);
+			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1.5, z: 2}, mat);
+			await this.bottomDetector.created();
 			this.bottomDetector.attach(this.player.id, 'neck');
 			this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
 				if (otherActor.name === FRONT_DETECTOR) { callback('bottom'); }
 			});
 			this.actors.push(this.topDetector, this.bottomDetector, this.frontDetector);
+			return Promise.resolve();
 		} catch (error) {
 			this.detecting = false;
 			throw error;
