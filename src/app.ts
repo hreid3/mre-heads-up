@@ -31,6 +31,7 @@ export default class App implements ApplicationManager {
 	private store: Store<AppState>;
 	private assets: MRE.Asset[] = []
 	private gameSessionSoundAssets: Record<string, MRE.Sound>;
+	private appStarted = false;
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet, private damBaseUri: string) {
 		console.log("constructed", this.context.sessionId);
@@ -47,7 +48,7 @@ export default class App implements ApplicationManager {
 	getAssets = () => this.assets;
 
 	private handleUserJoined = async (user: MRE.User) => {
-		await block(() => this.getStore().getState().app.appStarted)
+		await block(() => this.appStarted)
 		this.deckSelection.attachBehaviors();
 	};
 
@@ -93,9 +94,10 @@ export default class App implements ApplicationManager {
 		// Listen for game start events
 		this.detectChanges();
 
-		delay(2500); // Splash delay
 		// Destroy Splash
 		this.store.dispatch(setAppStarted(true));
+		delay(2500); // Splash delay
+		this.appStarted = true;
 		console.log("App Started");
 	};
 
