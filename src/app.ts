@@ -30,6 +30,7 @@ export default class App implements ApplicationManager {
 	private backgroundPrefab: MRE.Prefab;
 	private store: Store<AppState>;
 	private assets: MRE.Asset[] = []
+	private gameSessionSoundAssets: Record<string, MRE.Sound>;
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet, private damBaseUri: string) {
 		console.log("constructed", this.context.sessionId);
@@ -59,6 +60,7 @@ export default class App implements ApplicationManager {
 
 	private started = async () => {
 		this.appRoot = MRE.Actor.Create(this.context, {actor: {name: "AppRoot"}});
+		await this.appRoot.created();
 		// Show Splash
 		console.log("Loading Digital Assets from", this.damBaseUri || '/public');
 		this.store = createStore();
@@ -71,6 +73,7 @@ export default class App implements ApplicationManager {
 			this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
 			this.backgroundPrefab = backgroundPrefabLoader.find(a => a.prefab !== null).prefab;
 		});
+		this.gameSessionSoundAssets = await this.preloadSoundAssets();
 		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 		// @ts-ignore
 		this.store.dispatch(loadDecksFromFileSystem());
@@ -123,11 +126,41 @@ export default class App implements ApplicationManager {
 			if (gm.state === GAME_STATE.Playing) {
 				const player = this.context.user(parseGuid(this.gameSession.playerId));
 				this.headsUpCard?.destroy();
-				this.headsUpCard = new HeadsUpCard(this, player, this.headsUpCardPrefab);
+				this.headsUpCard = new HeadsUpCard(this, player, this.headsUpCardPrefab, this.gameSessionSoundAssets);
 			} else if (gm.state === GAME_STATE.Waiting) {
 				console.log("canceled");
 				this.headsUpCard?.destroy();
 			}
 		}
+	}
+
+	private preloadSoundAssets = async () => {
+		const soundAssets: Record<string, MRE.Sound> = {};
+		soundAssets["head-down-sound"] = this.assetContainer.createSound(
+			"head-down-sound",
+			{ uri: `${this.damBaseUri}/sounds/head-down.wav` }
+		);
+		soundAssets["head-up-sound"] = this.assetContainer.createSound(
+			"head-up-sound",
+			{ uri: `${this.damBaseUri}/sounds/head-up.wav` }
+		);
+		soundAssets["pre-countdown-sound"] = this.assetContainer.createSound(
+			"pre-countdown-sound",
+			{ uri: `${this.damBaseUri}/sounds/count-down.wav` }
+		);
+		soundAssets["end-game-session-sound"] = this.assetContainer.createSound(
+			"end-game-session-sound",
+			{ uri: `${this.damBaseUri}/sounds/game-session-ended.wav` }
+		);
+		soundAssets["final-count-down-sound"] = this.assetContainer.createSound(
+			"final-count-down-sound",
+			{ uri: `${this.damBaseUri}/sounds/final-count-down.wav` }
+		);
+		soundAssets["first-card-sound"] = this.assetContainer.createSound(
+			"first-card-sound",
+			{ uri: `${this.damBaseUri}/sounds/display-text.wav` }
+		);
+		await Promise.all(Object.values(soundAssets).map(v => v.created));
+		return soundAssets;
 	}
 }
