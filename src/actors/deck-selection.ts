@@ -11,6 +11,8 @@ import noop from "../utils/noop";
 const playButtonName = "playButton";
 const playButtonLabel = "label";
 const DECK_CARD_PREFIX = "deckCard_";
+const CARD_TEXT_HEIGHT = 0.3;
+
 
 const getButtonLabel =
 	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
@@ -29,6 +31,7 @@ export class DeckSelection {
 	private assetContainer: MRE.AssetContainer;
 	private playButtonMaterial: MRE.Asset;
 	private playButtonBox: MRE.Asset;
+	private title: MRE.Actor;
 
 	constructor(
 		private appManager: ApplicationManager,
@@ -151,9 +154,17 @@ export class DeckSelection {
 					parentId: this.root.id,
 					transform: {
 						local: {
-							scale: { x: 1.0, y: (0.31 * row) - 0.02, z: 0.5 }
+							scale: { x: 1.0, y: (0.4 * row) - 0.02, z: 0.5 }
 						}
 					},
+					// text: {
+					// 	pixelsPerLine: 12,
+					// 	contents: "",
+					// 	height: CARD_TEXT_HEIGHT,
+					// 	anchor: MRE.TextAnchorLocation.BottomCenter,
+					// 	justify: MRE.TextJustify.Left,
+					// 	color: theme.color.font.header
+					// },
 					collider: {
 						geometry: {
 							shape: MRE.ColliderType.Auto
@@ -164,6 +175,14 @@ export class DeckSelection {
 			}
 		);
 		this.backDrop.collider.onTrigger("trigger-enter", noop);
+		this.title = this.createTitle(this.backDrop.transform.local.scale.y)
+		const val = wordwrap(`Holladecks`, {
+			width: 16
+		});
+		this.title.text.contents = val;
+		this.title.text.height = CARD_TEXT_HEIGHT;
+
+		this.title.appearance.enabled = true;
 	};
 
 	// eslint-disable-next-line max-len
@@ -417,4 +436,31 @@ export class DeckSelection {
 		this.getPlayButton(base, deck);
 		return base;
 	};
+
+	private createTitle = (backdropHeight: number)=>MRE.Actor.Create(this.appManager.getContext(),
+        {
+            actor: {
+				name: `title`,
+                parentId: this.root.id,
+                transform: {
+                    local: {
+                        position: {y: backdropHeight}
+                    }
+                },
+                text: {
+                    pixelsPerLine: 12,
+                    contents: "",
+                    height: CARD_TEXT_HEIGHT,
+                    anchor: MRE.TextAnchorLocation.BottomCenter,
+                    justify: MRE.TextJustify.Center,
+                    color: theme.color.font.header
+                },
+				collider: {
+                    geometry: {
+                        shape: MRE.ColliderType.Auto
+                    },
+                    isTrigger: true
+                }
+			}
+		})
 }
