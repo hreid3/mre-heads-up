@@ -420,47 +420,47 @@ export class DeckSelection {
 	private createDeck = (deck: Deck) => {
 		const base = MRE.Actor.Create(
 			this.appManager.getContext(), {
-				actor: {
-					name: `${DECK_CARD_PREFIX}${deck.name}`,
-					parentId: this.root.id,
-					transform: { local: { rotation: { y: deck.flipped ? 9 : 0 } } },
-					collider: {
-						geometry: {
-							shape: MRE.ColliderType.Auto
-						},
-						isTrigger: true
-					}
+			actor: {
+				name: `${DECK_CARD_PREFIX}${deck.name}`,
+				parentId: this.root.id,
+				transform: { local: { rotation: { y: deck.flipped ? 9 : 0 } } },
+				collider: {
+					geometry: {
+						shape: MRE.ColliderType.Auto
+					},
+					isTrigger: true
 				}
-			});
+			}
+		});
 		this.getDeckPrefab(deck, base);
 		this.getPlayButton(base, deck);
 		return base;
 	};
 
-	private createTitle = (backdropHeight: number)=>MRE.Actor.Create(this.appManager.getContext(),
-        {
-            actor: {
+	private createTitle = (backdropHeight: number) => MRE.Actor.Create(this.appManager.getContext(),
+		{
+			actor: {
 				name: `title`,
-                parentId: this.root.id,
-                transform: {
-                    local: {
-                        position: {y: backdropHeight}
-                    }
-                },
-                text: {
-                    pixelsPerLine: 12,
-                    contents: "",
-                    height: CARD_TEXT_HEIGHT,
-                    anchor: MRE.TextAnchorLocation.BottomCenter,
-                    justify: MRE.TextJustify.Center,
-                    color: theme.color.font.header
-                },
+				parentId: this.root.id,
+				transform: {
+					local: {
+						position: { y: backdropHeight }
+					}
+				},
+				text: {
+					pixelsPerLine: 12,
+					contents: "",
+					height: CARD_TEXT_HEIGHT,
+					anchor: MRE.TextAnchorLocation.BottomCenter,
+					justify: MRE.TextJustify.Center,
+					color: theme.color.font.header
+				},
 				collider: {
-                    geometry: {
-                        shape: MRE.ColliderType.Auto
-                    },
-                    isTrigger: true
-                }
+					geometry: {
+						shape: MRE.ColliderType.Auto
+					},
+					isTrigger: true
+				}
 			}
 		})
 }
