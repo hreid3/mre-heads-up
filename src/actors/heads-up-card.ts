@@ -248,7 +248,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 	buildCard = () => {
 		this.actorRef = [];
 		const mat = this.assets.createMaterial("mat", { color: theme.color.background.default });
-		const box = this.assets.createBoxMesh("box", 1.25, 0.8, 0.075);
+		const box = this.assets.createBoxMesh("box", .75, 0.5, 0.075);
 		this.root = MRE.Actor.Create(this.appManager.getContext(), {
 			actor: {
 				name: "HeadsUpCardRoot",
