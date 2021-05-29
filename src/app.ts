@@ -30,7 +30,7 @@ export default class App implements ApplicationManager {
 	private backgroundPrefab: MRE.Prefab;
 	private store: Store<AppState>;
 	private assets: MRE.Asset[] = []
-	private gameSessionSoundAssets: Record<string, MRE.Sound>;
+	private soundAssets: Record<string, MRE.Sound>;
 	private appStarted = false;
 
 	constructor(private context: MRE.Context, private parameterSet: MRE.ParameterSet, private damBaseUri: string) {
@@ -74,7 +74,7 @@ export default class App implements ApplicationManager {
 			this.headsUpCardPrefab = headsUpCardPrefabLoader.find(a => a.prefab !== null).prefab;
 			this.backgroundPrefab = backgroundPrefabLoader.find(a => a.prefab !== null).prefab;
 		});
-		this.gameSessionSoundAssets = await this.preloadSoundAssets();
+		this.soundAssets = await this.preloadSoundAssets();
 		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 		// @ts-ignore
 		this.store.dispatch(loadDecksFromFileSystem());
@@ -89,7 +89,7 @@ export default class App implements ApplicationManager {
 			deckCardsPrefabs[deck.id] = prefab
 		}
 
-		this.deckSelection = new DeckSelection(this, this.backgroundPrefab, deckCardsPrefabs);
+		this.deckSelection = new DeckSelection(this, this.backgroundPrefab, deckCardsPrefabs, this.soundAssets);
 		this.gameSessionResults = new GameSessionResults(this, this.backgroundPrefab);
 		// Listen for game start events
 		this.detectChanges();
@@ -128,7 +128,7 @@ export default class App implements ApplicationManager {
 			if (gm.state === GAME_STATE.Playing) {
 				const player = this.context.user(parseGuid(this.gameSession.playerId));
 				this.headsUpCard?.destroy();
-				this.headsUpCard = new HeadsUpCard(this, player, this.headsUpCardPrefab, this.gameSessionSoundAssets);
+				this.headsUpCard = new HeadsUpCard(this, player, this.headsUpCardPrefab, this.soundAssets);
 			} else if (gm.state === GAME_STATE.Waiting) {
 				console.log("canceled");
 				this.headsUpCard?.destroy();
@@ -161,6 +161,10 @@ export default class App implements ApplicationManager {
 		soundAssets["first-card-sound"] = this.assetContainer.createSound(
 			"first-card-sound",
 			{ uri: `${this.damBaseUri}/sounds/display-text.wav` }
+		);
+		soundAssets["play-button"] = this.assetContainer.createSound(
+			"play-button",
+			{ uri: `${this.damBaseUri}/sounds/play-button.wav` }
 		);
 		await Promise.all(Object.values(soundAssets).map(v => v.created));
 		return soundAssets;

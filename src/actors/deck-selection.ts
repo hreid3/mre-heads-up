@@ -33,7 +33,9 @@ export class DeckSelection {
 	constructor(
 		private appManager: ApplicationManager,
 		private prefab: MRE.Prefab,
-		private deckCardPrefabs: Record<string, MRE.Prefab>) {
+		private deckCardPrefabs: Record<string, MRE.Prefab>,
+		private soundAssets: Record<string, MRE.Sound>
+	) {
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 		this.playButtonMaterial = this.assets.createMaterial("mat", { color: theme.color.button.default.background });
 		this.playButtonBox = this.assets.createBoxMesh("box", 0.22, 0.075, 0.0005);
@@ -120,10 +122,7 @@ export class DeckSelection {
 			}
 			this.layoutCards(this.deckCards);
 		}
-		this.playButtonSoundAsset = this.assets.createSound(
-			"final-count-down",
-			{ uri: `/sounds/play-button.wav` }
-		);
+		this.playButtonSoundAsset = this.soundAssets["play-button"];
 	};
 
 	private layoutCards = (deckCards: Actor[]) => {
