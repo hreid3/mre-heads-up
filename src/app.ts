@@ -48,7 +48,7 @@ export default class App implements ApplicationManager {
 	getAssets = () => this.assets;
 
 	private handleUserJoined = async (user: MRE.User) => {
-		await block(() => this.appStarted)
+		await block(() => this.appStarted, 30000);
 		this.deckSelection.attachBehaviors();
 	};
 
