@@ -15,6 +15,8 @@ const DECK_CARD_PREFIX = "deckCard_";
 const getButtonLabel =
 	(actor: MRE.Actor) => actor.children.find(v => v.name === playButtonLabel);
 
+const scaleFactor = 1.5;
+
 export class DeckSelection {
 	private root: MRE.Actor;
 	private gridLayout: MRE.PlanarGridLayout;
@@ -270,13 +272,6 @@ export class DeckSelection {
 					this.attachDeckCardBehaviors(deck);
 				}
 			}
-			const lastFlippedCard = this.decksState.decks.find(value => value.flipped);
-			if (lastFlippedCard) {
-				const lastFlippedCardId = lastFlippedCard?.id;
-				const deckBase = this.deckCards.find(value =>
-					`${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
-				this.flipCard(deckBase, lastFlippedCardId, true);
-			}
 		}
 	};
 
@@ -293,58 +288,34 @@ export class DeckSelection {
 			if (this.gameSession.state === GAME_STATE.Waiting) {
 				const lastFlippedCard = this.decksState.decks.find(value => value.flipped);
 				const lastFlippedCardId = lastFlippedCard?.id;
-
-
 				if (lastFlippedCardId) { // Flip the existing card
-					this.appManager.getStore().dispatch(setFlipDeck({ id: lastFlippedCardId, flipped: false }));
+					this.appManager.getStore().dispatch(setFlipDeck({id: lastFlippedCardId, flipped: false}));
 					const otherCardBase = this.deckCards
 						.find(value => `${DECK_CARD_PREFIX}${lastFlippedCard.name}` === value.name);
-
-					const scaleFactor = 1;
-					const axis = new MRE.Vector3(0, 1, 0);
-					const { x, y, z } = this.actorDeckMapping[lastFlippedCardId].transform.local.position;
-
-					const position = new MRE.Vector3(x, y, z);
-					const rotation = MRE.Quaternion.RotationAxis(axis, 0);
-					const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-
-					MRE.Animation.AnimateTo(this.appManager.getContext(), otherCardBase, {
-						destination: { transform: { local: { position, rotation, scale } } },
-						duration: 0.25,
-						easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-					});
+					// TODO: Kevin to Animate
+					otherCardBase.transform.local.rotation.y = 0;
+					otherCardBase.transform.local.position.z = 0;
+					otherCardBase.transform.local.scale.x = otherCardBase.transform.local.scale.x / scaleFactor;
+					otherCardBase.transform.local.scale.y = otherCardBase.transform.local.scale.y / scaleFactor;
+					otherCardBase.transform.local.scale.z = otherCardBase.transform.local.scale.z / scaleFactor;
 				}
 				if (lastFlippedCardId !== deck.id) {
-					this.flipCard(deckBase, deck.id);
-					this.appManager.getStore().dispatch(setFlipDeck({ id: deck.id, flipped: true }));
+					this.flipCard(deckBase);
+					this.appManager.getStore().dispatch(setFlipDeck({id: deck.id, flipped: true}));
 				}
 			}
 		});
 	};
 
-	protected flipCard = (deckBase: MRE.Actor, id: ID, noanimattion = false) => {
-		const scaleFactor = 1.5;
-		const axis = new MRE.Vector3(0, 1, 0);
-
-		const { x, y, z } = this.actorDeckMapping[id].transform.local.position;
-
-		const position = new MRE.Vector3(x, y, z - 0.2);
-		const rotation = MRE.Quaternion.RotationAxis(axis, Math.PI);
-		const scale = new MRE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-
-		if (noanimattion) {
-			deckBase.transform.local.position = position;
-			deckBase.transform.local.rotation = rotation;
-			deckBase.transform.local.scale = scale;
-		} else {
-			MRE.Animation.AnimateTo(this.appManager.getContext(), deckBase, {
-				destination: { transform: { local: { position, rotation, scale } } },
-				duration: 0.25,
-				easing: MRE.AnimationEaseCurves.EaseOutQuadratic
-			});
-		}
-
+	protected flipCard = (deckBase: MRE.Actor) => {
+		// TODO: Kevin to Animate
+		deckBase.transform.local.rotation.y = 90;
+		deckBase.transform.local.position.z = -0.2;
+		deckBase.transform.local.scale.x = deckBase.transform.local.scale.x * scaleFactor;
+		deckBase.transform.local.scale.y = deckBase.transform.local.scale.y * scaleFactor;
+		deckBase.transform.local.scale.z = deckBase.transform.local.scale.z * scaleFactor;
 	}
+
 	protected attachPlayButtonBehaviors = (deck: Deck) => {
 		try {
 			const playButton = this.playerButtonMapping[deck.id];
