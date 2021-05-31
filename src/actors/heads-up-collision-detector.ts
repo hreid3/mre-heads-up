@@ -30,7 +30,7 @@ export class HeadsUpCollisionDetector {
 			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
 			await Promise.all([mat.created, headBoxMesh.created, detectorMesh.created]);
 			this.frontDetector =
-				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 2.25}, mat);
+				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 2.25}, mat, false);
 			await this.frontDetector.created();
 			this.frontDetector.attach(this.player.id, 'center-eye');
 
@@ -78,7 +78,9 @@ export class HeadsUpCollisionDetector {
 		name: string,
 		box: MRE.Mesh,
 		position: Partial<MRE.Vector3Like>,
-		mat: MRE.Material) => MRE.Actor.Create(this.context,
+		mat: MRE.Material,
+		isTrigger = true,
+	) => MRE.Actor.Create(this.context,
 		{
 			actor: {
 				parentId: this.parent.id,
@@ -96,13 +98,13 @@ export class HeadsUpCollisionDetector {
 				rigidBody: {
 					isKinematic: true,
 					useGravity: false,
-					mass: 0.1,
+					// mass: 0.1,
 				},
 				collider: {
 					geometry: {
 						shape: MRE.ColliderType.Auto,
 					},
-					isTrigger: true,
+					isTrigger,
 				}
 			}
 		}
