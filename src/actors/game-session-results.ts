@@ -26,7 +26,11 @@ export class GameSessionResults extends AbstractChangeDetection {
 	private correctSoundAsset: MRE.Asset;
 	private passSoundAsset: MRE.Asset;
 
-	constructor(appManager: ApplicationManager, private prefab: MRE.Prefab) {
+	constructor(
+		appManager: ApplicationManager,
+		private prefab: MRE.Prefab,
+		private soundAssets: Record<string, MRE.Sound>
+	) {
 		super(appManager);
 		this.assets = new MRE.AssetContainer(this.appManager.getContext());
 	}
@@ -105,14 +109,8 @@ export class GameSessionResults extends AbstractChangeDetection {
 	};
 
 	private setupSounds = () => {
-		this.correctSoundAsset = this.assets.createSound(
-			"correct-sound",
-			{ uri: `/sounds/display-text.wav` }
-		);
-		this.passSoundAsset = this.assets.createSound(
-			"passed-sound",
-			{ uri: `/sounds/negative-result.wav` }
-		);
+		this.correctSoundAsset = this.soundAssets["correct-sound"];
+		this.passSoundAsset = this.soundAssets["passed-sound"];
 	};
 
 	private fillAndApplyLayout = (base: MRE.Actor, layout: MRE.PlanarGridLayout) => {

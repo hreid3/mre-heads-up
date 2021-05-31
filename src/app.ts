@@ -90,7 +90,7 @@ export default class App implements ApplicationManager {
 		}
 
 		this.deckSelection = new DeckSelection(this, this.backgroundPrefab, deckCardsPrefabs, this.soundAssets);
-		this.gameSessionResults = new GameSessionResults(this, this.backgroundPrefab);
+		this.gameSessionResults = new GameSessionResults(this, this.backgroundPrefab, this.soundAssets);
 		// Listen for game start events
 		this.detectChanges();
 
@@ -165,6 +165,14 @@ export default class App implements ApplicationManager {
 		soundAssets["play-button"] = this.assetContainer.createSound(
 			"play-button",
 			{ uri: `${this.damBaseUri}/sounds/play-button.wav` }
+		);
+		soundAssets["correct-sound"] = this.assetContainer.createSound(
+			"correct-sound",
+			{ uri: `${this.damBaseUri}/sounds/display-text.wav` }
+		);
+		soundAssets["passed-sound"] = this.assetContainer.createSound(
+			"passed-sound",
+			{ uri: `${this.damBaseUri}/sounds/negative-result.wav` }
 		);
 		await Promise.all(Object.values(soundAssets).map(v => v.created));
 		return soundAssets;
