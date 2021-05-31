@@ -27,14 +27,14 @@ export class HeadsUpCollisionDetector {
 			const mat = this.assets.createMaterial('translucent',
 				{ alphaMode: AlphaMode.Blend, color: MRE.Color4.FromColor3(MRE.Color3.White(), 0.1)});
 			const headBoxMesh = this.assets.createBoxMesh('box', 0.5, 0.5, 0.5);
-			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 1.5, 0.5);
+			const detectorMesh = this.assets.createBoxMesh('box', 1.5, 0.5, 0.5);
 			await Promise.all([mat.created, headBoxMesh.created, detectorMesh.created]);
 			this.frontDetector =
 				this.getDetectableBox(FRONT_DETECTOR, headBoxMesh, {x: 0, y: 0, z: 2.25}, mat);
 			await this.frontDetector.created();
 			this.frontDetector.attach(this.player.id, 'center-eye');
 
-			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.75	 , z: 2}, mat);
+			this.topDetector = this.getDetectableBox('topBoxCollider', detectorMesh, {x: 0, y: 1.25 , z: 2}, mat);
 			await this.topDetector.created();
 			this.topDetector.attach(this.player.id, 'neck');
 			this.topDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
@@ -42,7 +42,7 @@ export class HeadsUpCollisionDetector {
 				console.log("Top collision")
 			});
 
-			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1.5, z: 2}, mat);
+			this.bottomDetector = this.getDetectableBox('bottomBoxCollider', detectorMesh, {x: 0, y: -1, z: 2}, mat);
 			await this.bottomDetector.created();
 			this.bottomDetector.attach(this.player.id, 'neck');
 			this.bottomDetector.collider.onTrigger('trigger-enter', (otherActor: MRE.Actor) => {
