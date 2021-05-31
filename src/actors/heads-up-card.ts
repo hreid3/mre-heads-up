@@ -177,7 +177,7 @@ export class HeadsUpCard extends AbstractChangeDetection {
 						geometry: {
 							shape: MRE.ColliderType.Auto
 						},
-						isTrigger: true
+						isTrigger: false
 					}
 				}
 			}
