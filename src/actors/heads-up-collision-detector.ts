@@ -3,7 +3,7 @@ import { AlphaMode } from "@microsoft/mixed-reality-extension-sdk";
 import debounce from "lodash.debounce";
 import config from "../config";
 
-const showCubes = false;
+const showCubes = true;
 export class HeadsUpCollisionDetector {
 	private assets: MRE.AssetContainer;
 	private topDetector: MRE.Actor;
