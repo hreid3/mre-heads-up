@@ -85,6 +85,7 @@ export class HeadsUpCollisionDetector {
 			actor: {
 				parentId: this.parent.id,
 				name,
+				exclusiveToUser: this.player.id,
 				appearance: {
 					meshId: box.id,
 					materialId: mat.id,
